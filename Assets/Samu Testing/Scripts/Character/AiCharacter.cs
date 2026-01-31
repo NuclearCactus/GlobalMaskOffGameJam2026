@@ -15,8 +15,9 @@ public class AiCharacter : Character
         currentDir = GetRandomDir();
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         // Change AI movement direction every x seconds
         timer += Time.deltaTime;
         if (timer > MovementTimer)

@@ -6,9 +6,9 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerCharacter : Character
 {
-
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         Vector3 MovementDir = Vector3.zero;
         if (Keyboard.current.wKey.isPressed)
         {
@@ -18,7 +18,7 @@ public class PlayerCharacter : Character
         {
             MovementDir.z = -1;
         }
-        if (Keyboard.current.dKey.isPressed) 
+        if (Keyboard.current.dKey.isPressed)
         {
             MovementDir.x = 1;
         }
@@ -26,7 +26,7 @@ public class PlayerCharacter : Character
         {
             MovementDir.x = -1;
         }
-        if (MovementDir.magnitude > 0) 
+        if (MovementDir.magnitude > 0)
         {
             Move(MovementDir);
         }

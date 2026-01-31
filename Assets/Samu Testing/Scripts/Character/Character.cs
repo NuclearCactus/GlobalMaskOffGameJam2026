@@ -1,0 +1,47 @@
+using UnityEngine;
+
+/// <summary>
+/// Abstract base class for character
+/// Ai and Player derive from this class
+/// Handles effects that both player and AI should have
+/// </summary>
+public abstract class Character : MonoBehaviour
+{
+    public Transform Opponent {  get; private set; }
+    [SerializeField] private float speed = 10;
+
+    /// <summary>
+    /// Sets the opponent that this character is looking at
+    /// </summary>
+    /// <param name="opponent"></param>
+    public void SetOpponent(Transform opponent)
+    {
+        Opponent = opponent;
+    }
+
+    /// <summary>
+    /// Virtual Update can be overridden
+    /// base should be called to look at opponent
+    /// </summary>
+    protected virtual void Update()
+    {
+        LookAtOpponent();
+    }
+
+    /// <summary>
+    /// Moves character
+    /// </summary>
+    /// <param name="dir"></param>
+    public void Move(Vector3 dir)
+    {
+        transform.position += speed * Time.deltaTime * dir;
+    }
+
+    /// <summary>
+    /// Looks at opponent
+    /// </summary>
+    public void LookAtOpponent()
+    {
+        transform.LookAt(Opponent.position);
+    }
+}
