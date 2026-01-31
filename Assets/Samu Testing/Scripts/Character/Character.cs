@@ -1,10 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Abstract base class for character
-/// Ai and Player derive from this class
-/// Handles effects that both player and AI should have
-/// </summary>
 public abstract class Character : MonoBehaviour
 {
     public bool IsAtEnemyArea;
@@ -21,25 +17,86 @@ public abstract class Character : MonoBehaviour
     private string attackType = "";
     public bool isHurt = false;
 
+    // === MASK SYSTEM ===
+    [Header("Mask Settings")]
+    [SerializeField] private Transform maskAnchor; // Assign the head/face transform in inspector
+    [SerializeField] private int initialMaskCount = 5;
+    [SerializeField] private float maskSpacing = 0.01f; // Horizontal spacing between stacked masks
+    
+    private List<MaskObject> masks = new List<MaskObject>();
+    
+    // Public accessors
+    public MaskObject TopMask => masks.Count > 0 ? masks[masks.Count - 1] : null;
+    public int MaskCount => masks.Count;
+    public bool IsAlive => masks.Count > 0;
+
     private void Start()
     {
         rightTimer = attackCd;
         leftTimer = attackCd;
+        InitializeMasks();
     }
 
     /// <summary>
-    /// Sets the opponent that this character is looking at
+    /// Creates the initial stack of masks on the character's face
     /// </summary>
-    /// <param name="opponent"></param>
+    private void InitializeMasks()
+    {
+        for (int i = 0; i < initialMaskCount; i++)
+        {
+            AddRandomMask();
+        }
+    }
+
+    /// <summary>
+    /// Adds a random mask to the stack
+    /// </summary>
+    private void AddRandomMask()
+    {
+        MaskObject newMask = NewMaskManager.Instance.CreateRandomMask();
+        
+        // Parent to the mask anchor (head)
+        newMask.transform.SetParent(maskAnchor, false);
+        
+        // Position it in the stack (each mask slightly forward/outward)
+        newMask.transform.localPosition = new Vector3(0, masks.Count * maskSpacing, 0);
+        newMask.transform.localRotation = Quaternion.identity;
+        
+        masks.Add(newMask);
+    }
+
+    /// <summary>
+    /// Removes and destroys the top mask (when taking damage)
+    /// </summary>
+    public void RemoveTopMask()
+    {
+        if (masks.Count == 0) return;
+
+        MaskObject topMask = masks[masks.Count - 1];
+        masks.RemoveAt(masks.Count - 1);
+        Destroy(topMask.gameObject);
+
+        // Check if character is defeated
+        if (masks.Count == 0)
+        {
+            OnDefeated();
+        }
+    }
+
+    /// <summary>
+    /// Called when character runs out of masks
+    /// </summary>
+    protected virtual void OnDefeated()
+    {
+        Debug.Log($"{gameObject.name} has been defeated!");
+        // Override in PlayerCharacter or AiCharacter for specific behavior
+    }
+
     public void SetOpponent(Character opponent)
     {
         Opponent = opponent;
     }
 
-    /// <summary>
-    /// Virtual Update can be overridden
-    /// base should be called to look at opponent
-    /// </summary>
     protected virtual void Update()
     {
         rightTimer += Time.deltaTime;
@@ -47,16 +104,11 @@ public abstract class Character : MonoBehaviour
         LookAtOpponent();
     }
 
-    /// <summary>
-    /// Moves character
-    /// </summary>
-    /// <param name="dir"></param>
     public void Move(Vector3 dir)
     {
         if (isAttacking || isHurt) return;
 
         Vector3 deltaPos = transform.position + (speed * Time.fixedDeltaTime * dir);
-
         deltaPos = GameManager.Instance.ClampCharacterPosInBounds(deltaPos);
 
         if (deltaPos != transform.position)
@@ -66,9 +118,6 @@ public abstract class Character : MonoBehaviour
         guyAnim.SetFloat("MoveY", dir.z);
     }
 
-    /// <summary>
-    /// Looks at opponent
-    /// </summary>
     public void LookAtOpponent()
     {
         transform.LookAt(Opponent.transform.position);
@@ -130,6 +179,9 @@ public abstract class Character : MonoBehaviour
         isHurt = true;
         isAttacking = false;
 
+        // Remove a mask when hurt
+        RemoveTopMask();
+
         if (attackDirection == "left")
         {
             guyAnim.SetTrigger("HitLeft");
@@ -152,10 +204,10 @@ public abstract class Character : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(enemyTag) && other.TryGetComponent<Character>(out var character) && !character != this)
+        if (other.CompareTag(enemyTag) && other.TryGetComponent<Character>(out var character) && character != this)
         {
             character.Hurt(attackType);
-            Debug.Log(other.name + " took damage");
+            Debug.Log(other.name + " took damage - Masks remaining: " + character.MaskCount);
         }
     }
 }
