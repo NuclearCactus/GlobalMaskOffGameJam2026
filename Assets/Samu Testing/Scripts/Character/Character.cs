@@ -19,7 +19,7 @@ public abstract class Character : MonoBehaviour
     private float leftTimer = 0f;
     private bool isAttacking = false;
     private string attackType = "";
-    private bool isHurt = false;
+    public bool isHurt = false;
 
     private void Start()
     {
@@ -78,8 +78,16 @@ public abstract class Character : MonoBehaviour
     {
         if (leftTimer <= attackCd || isAttacking || isHurt) return;
         leftTimer = 0f;
-        guyAnim.SetTrigger("PunchL");
-        attackType = "left";
+        if (IsAtEnemyArea)
+        {
+            guyAnim.SetTrigger("Uppercut");
+            attackType = "up";
+        }
+        else
+        {
+            guyAnim.SetTrigger("PunchL");
+            attackType = "left";
+        }
         isAttacking = true;
     }
 
@@ -87,8 +95,17 @@ public abstract class Character : MonoBehaviour
     {
         if (rightTimer <= attackCd || isAttacking || isHurt) return;
         rightTimer = 0f;
-        guyAnim.SetTrigger("PunchR");
-        attackType = "right";
+        if (IsAtEnemyArea)
+        {
+            guyAnim.SetTrigger("Uppercut");
+            attackType = "up";
+        }
+        else
+        {
+            guyAnim.SetTrigger("PunchR");
+            attackType = "right";
+        }
+
         isAttacking = true;
     }
 
@@ -111,6 +128,7 @@ public abstract class Character : MonoBehaviour
     {
         if (isHurt) return;
         isHurt = true;
+        isAttacking = false;
 
         if (attackDirection == "left")
         {
