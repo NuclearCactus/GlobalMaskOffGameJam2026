@@ -40,9 +40,6 @@ public class GameManager : MonoBehaviour
         Collider ArenaCollider = topArenaObj.GetComponent<Collider>();
         radius = (ArenaCollider.bounds.max.x - ArenaCollider.bounds.min.x) * 0.5f;
 
-        Vector3 playerPos = new(0f, 0f, radius * -0.5f);
-        Vector3 aiPos = new(0f, 0f, radius * 0.5f);
-
         Player.SetOpponent(Ai);
         Ai.SetOpponent(Player);
 

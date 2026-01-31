@@ -24,9 +24,9 @@ public class AiCharacter : Character
     private float defensiveTimer = 0f;
 
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
         switch (currentState)
         {
             case AiState.Idle:
@@ -49,7 +49,7 @@ public class AiCharacter : Character
 
     private void HandleIdle()
     {
-        moveTimer += Time.deltaTime;
+        moveTimer += Time.fixedDeltaTime;
         if (moveTimer > moveTime)
         {
             currentDir = GetRandomDir();
@@ -57,7 +57,7 @@ public class AiCharacter : Character
         }
         Move(currentDir);
 
-        idleTimer += Time.deltaTime;
+        idleTimer += Time.fixedDeltaTime;
         if (idleTimer > idleTime)
         {
             currentState = AiState.Offensive;
@@ -77,15 +77,11 @@ public class AiCharacter : Character
     private void HandleDefensive()
     {
         Move(transform.position - Opponent.transform.position);
-        defensiveTimer += Time.deltaTime;
+        defensiveTimer += Time.fixedDeltaTime;
         if (defensiveTimer > defensiveTime)
         {
             defensiveTimer = 0f;
             currentState = AiState.Idle;
-        }
-        if (IsInAttackRange())
-        {
-            Attack();
         }
     }
 

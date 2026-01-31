@@ -3,16 +3,14 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-    public bool IsAtEnemyArea;
-    public Character Opponent { get; private set; }
     [SerializeField] private Animator guyAnim;
     [SerializeField] private float speed = 10;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] private GameObject AttackHitBox;
     [SerializeField] private string enemyTag;
-    protected const float attackCd = 2.25f;
-    protected float rightTimer = 0f;
-    protected float leftTimer = 0f;
+    protected const float attackCd = 2f;
+    [SerializeField] protected float rightTimer = 0f;
+    [SerializeField] protected float leftTimer = 0f;
     protected float uppercutTimer = 0f;
     public bool isAttacking = false;
     private string attackType = "";
@@ -23,13 +21,18 @@ public abstract class Character : MonoBehaviour
     [SerializeField] private Transform maskAnchor; // Assign the head/face transform in inspector
     [SerializeField] private int initialMaskCount = 5;
     [SerializeField] private float maskSpacing = 0.01f; // Horizontal spacing between stacked masks
-    
+
     private List<MaskObject> masks = new List<MaskObject>();
-    
+
     // Public accessors
     public MaskObject TopMask => masks.Count > 0 ? masks[masks.Count - 1] : null;
     public int MaskCount => masks.Count;
     public bool IsAlive => masks.Count > 0;
+
+    public bool IsAtEnemyArea;
+    public Character Opponent { get; private set; }
+    public Transform MaskAnchor { get { return maskAnchor; } }
+
 
     private void Start()
     {
@@ -56,14 +59,19 @@ public abstract class Character : MonoBehaviour
     private void AddRandomMask()
     {
         MaskObject newMask = NewMaskManager.Instance.CreateRandomMask();
-        
+
+        AddMask(newMask);
+    }
+
+    public void AddMask(MaskObject newMask)
+    {
         // Parent to the mask anchor (head)
         newMask.transform.SetParent(maskAnchor, false);
-        
+
         // Position it in the stack (each mask slightly forward/outward)
-        newMask.transform.localPosition = new Vector3(0, masks.Count * maskSpacing, 0);
-        newMask.transform.localRotation = Quaternion.identity;
-        
+        newMask.transform.SetLocalPositionAndRotation(new Vector3(0, masks.Count * maskSpacing, 0), Quaternion.identity);
+
+        newMask.transform.localScale = new(0.005f, 0.005f, 0.005f);
         masks.Add(newMask);
     }
 
@@ -77,6 +85,21 @@ public abstract class Character : MonoBehaviour
         MaskObject topMask = masks[masks.Count - 1];
         masks.RemoveAt(masks.Count - 1);
         topMask.PopMask();
+
+        // Check if character is defeated
+        if (masks.Count == 0)
+        {
+            OnDefeated();
+        }
+    }
+
+    public void StealTopMask()
+    {
+        if (masks.Count == 0) return;
+
+        MaskObject topMask = masks[masks.Count - 1];
+        masks.RemoveAt(masks.Count - 1);
+        topMask.StealMask(Opponent);
 
         // Check if character is defeated
         if (masks.Count == 0)
@@ -99,19 +122,19 @@ public abstract class Character : MonoBehaviour
         Opponent = opponent;
     }
 
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
-        rightTimer += Time.deltaTime;
-        leftTimer += Time.deltaTime;
-        uppercutTimer += Time.deltaTime;
+        rightTimer += Time.fixedDeltaTime;
+        leftTimer += Time.fixedDeltaTime;
+        uppercutTimer += Time.fixedDeltaTime;
         LookAtOpponent();
 
-        if(rb.linearVelocity.magnitude > 0f)
+        if (rb.linearVelocity.magnitude > 0f)
         {
             Vector3 deltaPos = transform.position + rb.linearVelocity * Time.deltaTime;
-            if (GameManager.Instance.IsOutOfBounds(deltaPos)) 
+            if (GameManager.Instance.IsOutOfBounds(deltaPos))
             {
-                rb.linearVelocity *= -1f;
+                rb.linearVelocity *= -0.25f;
             }
         }
     }
@@ -119,6 +142,7 @@ public abstract class Character : MonoBehaviour
     public void Move(Vector3 dir)
     {
         if (isAttacking || isHurt) return;
+        rb.linearVelocity = Vector3.zero;
 
         Vector3 deltaPos = transform.position + (speed * Time.fixedDeltaTime * dir.normalized);
 
@@ -134,34 +158,47 @@ public abstract class Character : MonoBehaviour
     public void LookAtOpponent()
     {
         if (isHurt) return;
-        transform.LookAt(Opponent.transform.position);
+
+        Vector3 direction = (Opponent.transform.position - transform.position).normalized;
+        if (direction == Vector3.zero) return;
+        Quaternion desiredRot = Quaternion.LookRotation(direction);
+
+        Quaternion newRot = Quaternion.RotateTowards(
+            rb.rotation,
+            desiredRot,
+            Time.fixedDeltaTime * 100f);
+
+        rb.MoveRotation(newRot);
     }
 
-    public void LeftAttack()
+    public bool LeftAttack()
     {
-        if (leftTimer <= attackCd || isAttacking || isHurt) return;
+        if (leftTimer <= attackCd || isAttacking || isHurt) return false;
         leftTimer = 0f;
         guyAnim.SetTrigger("PunchL");
         attackType = "left";
         isAttacking = true;
+        return true;
     }
 
-    public void RightAttack()
+    public bool RightAttack()
     {
-        if (rightTimer <= attackCd || isAttacking || isHurt) return;
+        if (rightTimer <= attackCd || isAttacking || isHurt) return false;
         rightTimer = 0f;
         guyAnim.SetTrigger("PunchR");
         attackType = "right";
         isAttacking = true;
+        return true;
     }
 
-    public void UpperCut()
+    public bool UpperCut()
     {
-        if (uppercutTimer <= attackCd || isAttacking || isHurt) return;
+        if (uppercutTimer <= attackCd || isAttacking || isHurt) return false;
         uppercutTimer = 0f;
         guyAnim.SetTrigger("Uppercut");
         attackType = "up";
         isAttacking = true;
+        return true;
     }
 
     public void EnableHitbox()
@@ -184,22 +221,29 @@ public abstract class Character : MonoBehaviour
         if (isHurt) return;
         isHurt = true;
 
-        // Remove a mask when hurt
-        RemoveTopMask();
 
         if (attackDirection == "left")
         {
             guyAnim.SetTrigger("HitLeft");
+
+            // Remove a mask when hurt
+            RemoveTopMask();
         }
         if (attackDirection == "right")
         {
             guyAnim.SetTrigger("HitRight");
+
+            // Remove a mask when hurt
+            RemoveTopMask();
         }
         if (attackDirection == "up")
         {
             guyAnim.SetTrigger("HitUp");
+
+            // Remove a mask when hurt
+            StealTopMask();
         }
-        rb.AddForce(-transform.forward.normalized * 10f, ForceMode.Impulse);
+        rb.AddForce((attackDirection == "up" ? 3f : 1f) * 3f * -transform.forward.normalized, ForceMode.Impulse);
         DisableHitbox();
         isAttacking = false;
         guyAnim.SetFloat("MoveX", 0f);

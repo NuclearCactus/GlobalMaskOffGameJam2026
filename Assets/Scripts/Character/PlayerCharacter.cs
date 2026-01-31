@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class PlayerCharacter : Character
 {
-    public enum AttackType { Left, Right }
+    public enum AttackType { Left, Right, Uppercut }
 
     [System.Serializable]
     public class Combo
@@ -27,7 +27,7 @@ public class PlayerCharacter : Character
     [SerializeField] private float effectDuration = 1.5f;
 
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 5f;
+    private Vector3 movement;
 
     private List<AttackType> currentInputs = new List<AttackType>();
     private float lastInputTime;
@@ -47,9 +47,14 @@ public class PlayerCharacter : Character
         }
     }
 
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
+        Move(movement);
+    }
+
+    private void Update()
+    {
         HandleMovement();
         HandleAttacks();
     }
@@ -64,17 +69,20 @@ public class PlayerCharacter : Character
         bool pressed = false;
         AttackType type = AttackType.Left;
 
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        if (Mouse.current.leftButton.wasPressedThisFrame && LeftAttack())
         {
             type = AttackType.Left;
             pressed = true;
-            LeftAttack();
         }
-        else if (Mouse.current.rightButton.wasPressedThisFrame)
+        else if (Mouse.current.rightButton.wasPressedThisFrame && RightAttack())
         {
             type = AttackType.Right;
             pressed = true;
-            RightAttack();
+        }
+        else if(Keyboard.current.spaceKey.wasPressedThisFrame && UpperCut())
+        {
+            type = AttackType.Uppercut;
+            pressed = true;
         }
 
         if (pressed)
@@ -142,8 +150,6 @@ public class PlayerCharacter : Character
         if (kb.aKey.isPressed) x = -1;
         if (kb.dKey.isPressed) x = 1;
 
-        Vector3 move = (transform.forward * z) + (transform.right * x);
-        Vector3 targetVel = move.normalized * moveSpeed;
-        Move(targetVel);
+        movement = (transform.forward * z) + (transform.right * x).normalized;
     }
 }
