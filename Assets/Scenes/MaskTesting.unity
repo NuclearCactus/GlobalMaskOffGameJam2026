@@ -240,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dd11088ef9f2e045ad3d0cf246c9e21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMaskManager
-  maskPrefab: {fileID: 7613308658217885903, guid: cb436b5980d391d41adc31cb1b7bb779, type: 3}
+  maskPrefab: {fileID: 3211464547148656802, guid: 0938688361d082c4682a21308f6952f0, type: 3}
   allMasks:
   - {fileID: 11400000, guid: 1f6405f180438da4cb749d611d05334e, type: 2}
   - {fileID: 11400000, guid: 3a0393e1438393d4ab15e41ec7db196a, type: 2}
