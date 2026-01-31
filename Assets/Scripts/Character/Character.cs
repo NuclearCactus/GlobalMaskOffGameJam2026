@@ -128,8 +128,18 @@ public abstract class Character : MonoBehaviour
     {
         if (leftTimer <= attackCd || isAttacking || isHurt) return;
         leftTimer = 0f;
-        guyAnim.SetTrigger("PunchL");
-        attackType = "left";
+        if(!IsAtEnemyArea)
+        {
+            guyAnim.SetTrigger("PunchL");
+            attackType = "left";
+        }
+        else
+        {
+            guyAnim.SetTrigger("Uppercut");
+            attackType = "up";
+            rightTimer = 0f;
+        }
+
         isAttacking = true;
     }
 
@@ -137,8 +147,17 @@ public abstract class Character : MonoBehaviour
     {
         if (rightTimer <= attackCd || isAttacking || isHurt) return;
         rightTimer = 0f;
-        guyAnim.SetTrigger("PunchR");
-        attackType = "right";
+        if (!IsAtEnemyArea)
+        {
+            guyAnim.SetTrigger("PunchR");
+            attackType = "right";
+        }
+        else
+        {
+            guyAnim.SetTrigger("Uppercut");
+            attackType = "up";
+            leftTimer = 0f;
+        }
         isAttacking = true;
     }
 
@@ -178,6 +197,8 @@ public abstract class Character : MonoBehaviour
             guyAnim.SetTrigger("HitUp");
         }
         rb.AddForce(Vector3.back * 100f);
+        DisableHitbox();
+        isAttacking = false;
     }
 
     public void EndHurt()

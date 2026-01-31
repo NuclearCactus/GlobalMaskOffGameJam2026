@@ -10,8 +10,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public PlayerCharacter Player { get; private set; }
-    public AiCharacter Ai { get; private set; }
+    public PlayerCharacter Player;
+    public AiCharacter Ai;
 
     [SerializeField] private PlayerCharacter PlayerPrefab;
     [SerializeField] private AiCharacter AiPrefab;
@@ -42,9 +42,6 @@ public class GameManager : MonoBehaviour
 
         Vector3 playerPos = new(0f, 0f, radius * -0.5f);
         Vector3 aiPos = new(0f, 0f, radius * 0.5f);
-
-        Player = Instantiate(PlayerPrefab, playerPos, Quaternion.identity, transform);
-        Ai = Instantiate(AiPrefab, aiPos, Quaternion.identity, transform);
 
         Player.SetOpponent(Ai);
         Ai.SetOpponent(Player);
