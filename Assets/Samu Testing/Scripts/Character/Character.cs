@@ -7,14 +7,15 @@ using UnityEngine;
 /// </summary>
 public abstract class Character : MonoBehaviour
 {
-    public Transform Opponent {  get; private set; }
+    public bool IsAtEnemyArea;
+    public Character Opponent {  get; private set; }
     [SerializeField] private float speed = 10;
 
     /// <summary>
     /// Sets the opponent that this character is looking at
     /// </summary>
     /// <param name="opponent"></param>
-    public void SetOpponent(Transform opponent)
+    public void SetOpponent(Character opponent)
     {
         Opponent = opponent;
     }
@@ -42,6 +43,6 @@ public abstract class Character : MonoBehaviour
     /// </summary>
     public void LookAtOpponent()
     {
-        transform.LookAt(Opponent.position);
+        transform.LookAt(Opponent.transform.position);
     }
 }

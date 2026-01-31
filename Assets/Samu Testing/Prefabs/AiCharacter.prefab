@@ -45,8 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22809dc60b589324197e0db1d471c7fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AiCharacter
-  speed: 1
-  MovementTimer: 2
+  IsAtEnemyArea: 0
+  speed: 3
+  MovementTimer: 3
 --- !u!1 &4240720334162874093
 GameObject:
   m_ObjectHideFlags: 0

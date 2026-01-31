@@ -160,7 +160,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69877d817060d1f429fe78cbc2e32fef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
-  speed: 1
+  IsAtEnemyArea: 0
+  speed: 3
 --- !u!1 &8612027178726418447
 GameObject:
   m_ObjectHideFlags: 0
