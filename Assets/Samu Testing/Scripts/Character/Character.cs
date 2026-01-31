@@ -15,7 +15,7 @@ public abstract class Character : MonoBehaviour
     private float leftTimer = 0f;
     private bool isAttacking = false;
     private string attackType = "";
-    public bool isHurt = false;
+    private bool isHurt = false;
 
     // === MASK SYSTEM ===
     [Header("Mask Settings")]
@@ -127,16 +127,8 @@ public abstract class Character : MonoBehaviour
     {
         if (leftTimer <= attackCd || isAttacking || isHurt) return;
         leftTimer = 0f;
-        if (IsAtEnemyArea)
-        {
-            guyAnim.SetTrigger("Uppercut");
-            attackType = "up";
-        }
-        else
-        {
-            guyAnim.SetTrigger("PunchL");
-            attackType = "left";
-        }
+        guyAnim.SetTrigger("PunchL");
+        attackType = "left";
         isAttacking = true;
     }
 
@@ -144,17 +136,8 @@ public abstract class Character : MonoBehaviour
     {
         if (rightTimer <= attackCd || isAttacking || isHurt) return;
         rightTimer = 0f;
-        if (IsAtEnemyArea)
-        {
-            guyAnim.SetTrigger("Uppercut");
-            attackType = "up";
-        }
-        else
-        {
-            guyAnim.SetTrigger("PunchR");
-            attackType = "right";
-        }
-
+        guyAnim.SetTrigger("PunchR");
+        attackType = "right";
         isAttacking = true;
     }
 
@@ -177,7 +160,6 @@ public abstract class Character : MonoBehaviour
     {
         if (isHurt) return;
         isHurt = true;
-        isAttacking = false;
 
         // Remove a mask when hurt
         RemoveTopMask();
