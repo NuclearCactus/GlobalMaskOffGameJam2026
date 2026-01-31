@@ -13,6 +13,7 @@ public abstract class Character : MonoBehaviour
     [SerializeField] private float speed = 10;
     [SerializeField] private float attackCd = 1.5f;
     private float attackTimer = 0f;
+    private bool isAttacking = false;
 
     private void Start()
     {
@@ -44,6 +45,7 @@ public abstract class Character : MonoBehaviour
     /// <param name="dir"></param>
     public void Move(Vector3 dir)
     {
+        if (isAttacking) return;
         transform.position += speed * Time.deltaTime * dir;
     }
 
@@ -55,11 +57,18 @@ public abstract class Character : MonoBehaviour
         transform.LookAt(Opponent.transform.position);
     }
 
-    public void StartAttack()
+    public void LeftAttack()
     {
         if (attackTimer <= attackCd) return;
         attackTimer = 0f;
         guyAnim.SetTrigger("PunchL");
+    }
+
+    public void RightAttack()
+    {
+        if (attackTimer <= attackCd) return;
+        attackTimer = 0f;
+        guyAnim.SetTrigger("PunchR");
     }
 
     public void EnableHitbox()

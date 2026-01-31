@@ -32,7 +32,7 @@ public class PlayerCharacter : Character
         }
         if(Mouse.current.leftButton.isPressed)
         {
-            StartAttack();
+            LeftAttack();
         }
     }
 }
