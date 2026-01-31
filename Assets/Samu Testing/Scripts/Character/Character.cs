@@ -15,12 +15,14 @@ public abstract class Character : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private GameObject AttackHitBox;
     [SerializeField] private TagHandle enemyTag;
-    private float attackTimer = 0f;
+    private float rightTimer = 0f;
+    private float leftTimer = 0f;
     private bool isAttacking = false;
 
     private void Start()
     {
-        attackTimer = attackCd;
+        rightTimer = attackCd;
+        leftTimer = attackCd;
     }
 
     /// <summary>
@@ -36,10 +38,10 @@ public abstract class Character : MonoBehaviour
     /// Virtual Update can be overridden
     /// base should be called to look at opponent
     /// </summary>
-    protected virtual void Update()
+    protected virtual void FixedUpdate()
     {
-        LookAtOpponent();
-        attackTimer += Time.deltaTime;
+        rightTimer += Time.deltaTime;
+        leftTimer+= Time.deltaTime;
     }
 
     /// <summary>
@@ -49,7 +51,16 @@ public abstract class Character : MonoBehaviour
     public void Move(Vector3 dir)
     {
         if (isAttacking) return;
-        rb.MovePosition(transform.position + speed * Time.fixedDeltaTime * dir);
+
+        Vector3 deltaPos = transform.position + (speed * Time.fixedDeltaTime * dir);
+
+        deltaPos = GameManager.Instance.ClampCharacterPosInBounds(deltaPos);
+
+        if (deltaPos != transform.position)
+            rb.MovePosition(deltaPos);
+
+        guyAnim.SetFloat("MoveX", dir.x);
+        guyAnim.SetFloat("MoveY", dir.z);
     }
 
     /// <summary>
@@ -62,16 +73,16 @@ public abstract class Character : MonoBehaviour
 
     public void LeftAttack()
     {
-        if (attackTimer <= attackCd) return;
-        attackTimer = 0f;
+        if (leftTimer <= attackCd || isAttacking) return;
+        leftTimer = 0f;
         guyAnim.SetTrigger("PunchL");
         isAttacking = true;
     }
 
     public void RightAttack()
     {
-        if (attackTimer <= attackCd) return;
-        attackTimer = 0f;
+        if (rightTimer <= attackCd || isAttacking) return;
+        rightTimer = 0f;
         guyAnim.SetTrigger("PunchR");
         isAttacking = true;
     }

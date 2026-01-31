@@ -6,9 +6,9 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerCharacter : Character
 {
-    protected override void Update()
+    protected override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
         Vector3 MovementDir = Vector3.zero;
         if (Keyboard.current.wKey.isPressed)
         {
@@ -26,11 +26,8 @@ public class PlayerCharacter : Character
         {
             MovementDir.x = -1;
         }
-        if (MovementDir.magnitude > 0)
-        {
-            Move(MovementDir.normalized);
-        }
-        if(Mouse.current.leftButton.isPressed)
+        Move(MovementDir.normalized);
+        if (Mouse.current.leftButton.isPressed)
         {
             LeftAttack();
         }

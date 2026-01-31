@@ -85,9 +85,6 @@ public class GameManager : MonoBehaviour
             botIsGreen = !botIsGreen;
             changeSideTimer = 0f;
         }
-
-        ClampCharacterInsideArena(botCharacter.transform);
-        ClampCharacterInsideArena(topCharacter.transform);
     }
 
     private bool IsCharacterInOnTopSide(Vector3 pos)
@@ -95,8 +92,13 @@ public class GameManager : MonoBehaviour
         return pos.z > transform.position.z;
     }
 
-    private void ClampCharacterInsideArena(Transform target)
+    public Vector3 ClampCharacterPosInBounds(Vector3 deltaPos)
     {
-        target.position = Vector3.ClampMagnitude(target.position, radius);
+        if (Vector3.Distance(transform.position, deltaPos) >= radius)
+        {
+            deltaPos = Vector3.ClampMagnitude(deltaPos, radius);
+        }
+
+        return deltaPos;
     }
 }
