@@ -18,4 +18,9 @@ public class CharacterAnimEvents : MonoBehaviour
     {
         character.EndAttack();
     }
+
+    public void EndHurt()
+    {
+        character.EndHurt();
+    }
 }

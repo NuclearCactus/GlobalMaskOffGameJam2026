@@ -6,9 +6,9 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerCharacter : Character
 {
-    protected override void FixedUpdate()
+    protected override void Update()
     {
-        base.FixedUpdate();
+        base.Update();
         Vector3 MovementDir = Vector3.zero;
         if (Keyboard.current.wKey.isPressed)
         {

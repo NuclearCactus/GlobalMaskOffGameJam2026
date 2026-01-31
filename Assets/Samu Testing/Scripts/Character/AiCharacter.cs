@@ -10,9 +10,9 @@ public class AiCharacter : Character
     private float timer = 0.0f;
     Vector3 currentDir = Vector3.zero;
 
-    protected override void FixedUpdate()
+    protected override void Update()
     {
-        base.FixedUpdate();
+        base.Update();
         // Change AI movement direction every x seconds
         timer += Time.deltaTime;
         if (timer > MovementTimer)

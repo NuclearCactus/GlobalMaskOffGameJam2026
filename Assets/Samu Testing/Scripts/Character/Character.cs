@@ -8,16 +8,18 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour
 {
     public bool IsAtEnemyArea;
-    public Character Opponent {  get; private set; }
+    public Character Opponent { get; private set; }
     [SerializeField] private Animator guyAnim;
     [SerializeField] private float speed = 10;
     [SerializeField] private float attackCd = 1.5f;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private GameObject AttackHitBox;
-    [SerializeField] private TagHandle enemyTag;
+    [SerializeField] private string enemyTag;
     private float rightTimer = 0f;
     private float leftTimer = 0f;
     private bool isAttacking = false;
+    private string attackType = "";
+    private bool isHurt = false;
 
     private void Start()
     {
@@ -38,10 +40,11 @@ public abstract class Character : MonoBehaviour
     /// Virtual Update can be overridden
     /// base should be called to look at opponent
     /// </summary>
-    protected virtual void FixedUpdate()
+    protected virtual void Update()
     {
         rightTimer += Time.deltaTime;
-        leftTimer+= Time.deltaTime;
+        leftTimer += Time.deltaTime;
+        LookAtOpponent();
     }
 
     /// <summary>
@@ -50,7 +53,7 @@ public abstract class Character : MonoBehaviour
     /// <param name="dir"></param>
     public void Move(Vector3 dir)
     {
-        if (isAttacking) return;
+        if (isAttacking || isHurt) return;
 
         Vector3 deltaPos = transform.position + (speed * Time.fixedDeltaTime * dir);
 
@@ -73,17 +76,19 @@ public abstract class Character : MonoBehaviour
 
     public void LeftAttack()
     {
-        if (leftTimer <= attackCd || isAttacking) return;
+        if (leftTimer <= attackCd || isAttacking || isHurt) return;
         leftTimer = 0f;
         guyAnim.SetTrigger("PunchL");
+        attackType = "left";
         isAttacking = true;
     }
 
     public void RightAttack()
     {
-        if (rightTimer <= attackCd || isAttacking) return;
+        if (rightTimer <= attackCd || isAttacking || isHurt) return;
         rightTimer = 0f;
         guyAnim.SetTrigger("PunchR");
+        attackType = "right";
         isAttacking = true;
     }
 
@@ -102,11 +107,37 @@ public abstract class Character : MonoBehaviour
         isAttacking = false;
     }
 
+    public void Hurt(string attackDirection)
+    {
+        if (isHurt) return;
+        isHurt = true;
+
+        if (attackDirection == "left")
+        {
+            guyAnim.SetTrigger("HitLeft");
+        }
+        if (attackDirection == "right")
+        {
+            guyAnim.SetTrigger("HitRight");
+        }
+        if (attackDirection == "up")
+        {
+            guyAnim.SetTrigger("HitUp");
+        }
+        rb.AddForce(Vector3.back * 100f);
+    }
+
+    public void EndHurt()
+    {
+        isHurt = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag(enemyTag))
+        if (other.CompareTag(enemyTag) && other.TryGetComponent<Character>(out var character) && !character != this)
         {
-            Debug.Log("Take damage");
+            character.Hurt(attackType);
+            Debug.Log(other.name + " took damage");
         }
     }
 }
