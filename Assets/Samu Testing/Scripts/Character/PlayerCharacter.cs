@@ -28,11 +28,15 @@ public class PlayerCharacter : Character
         }
         if (MovementDir.magnitude > 0)
         {
-            Move(MovementDir);
+            Move(MovementDir.normalized);
         }
         if(Mouse.current.leftButton.isPressed)
         {
             LeftAttack();
+        }
+        if (Mouse.current.rightButton.isPressed)
+        {
+            RightAttack();
         }
     }
 }

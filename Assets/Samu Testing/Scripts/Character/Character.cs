@@ -12,6 +12,9 @@ public abstract class Character : MonoBehaviour
     [SerializeField] private Animator guyAnim;
     [SerializeField] private float speed = 10;
     [SerializeField] private float attackCd = 1.5f;
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] private GameObject AttackHitBox;
+    [SerializeField] private TagHandle enemyTag;
     private float attackTimer = 0f;
     private bool isAttacking = false;
 
@@ -46,7 +49,7 @@ public abstract class Character : MonoBehaviour
     public void Move(Vector3 dir)
     {
         if (isAttacking) return;
-        transform.position += speed * Time.deltaTime * dir;
+        rb.MovePosition(transform.position + speed * Time.fixedDeltaTime * dir);
     }
 
     /// <summary>
@@ -62,6 +65,7 @@ public abstract class Character : MonoBehaviour
         if (attackTimer <= attackCd) return;
         attackTimer = 0f;
         guyAnim.SetTrigger("PunchL");
+        isAttacking = true;
     }
 
     public void RightAttack()
@@ -69,15 +73,29 @@ public abstract class Character : MonoBehaviour
         if (attackTimer <= attackCd) return;
         attackTimer = 0f;
         guyAnim.SetTrigger("PunchR");
+        isAttacking = true;
     }
 
     public void EnableHitbox()
     {
-
+        AttackHitBox.SetActive(true);
     }
 
     public void DisableHitbox()
     {
+        AttackHitBox.SetActive(false);
+    }
 
+    public void EndAttack()
+    {
+        isAttacking = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag(enemyTag))
+        {
+            Debug.Log("Take damage");
+        }
     }
 }

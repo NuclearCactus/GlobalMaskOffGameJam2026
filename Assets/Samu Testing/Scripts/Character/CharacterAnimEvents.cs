@@ -6,11 +6,16 @@ public class CharacterAnimEvents : MonoBehaviour
 
     public void EnableHitbox()
     {
-
+        character.EnableHitbox();
     }
 
     public void DisableHitbox()
     {
+        character.DisableHitbox();
+    }
 
+    public void EndAttack()
+    {
+        character.EndAttack();
     }
 }

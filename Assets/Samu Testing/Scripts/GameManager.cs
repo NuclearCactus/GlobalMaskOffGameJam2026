@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
         target.GetComponent<MeshRenderer>().SetPropertyBlock(block);
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         bool botIsAtEnemy = IsCharacterInOnTopSide(botCharacter.transform.position);
         bool topIsAtEnemy = !IsCharacterInOnTopSide(topCharacter.transform.position);
