@@ -7,15 +7,16 @@ public abstract class Character : MonoBehaviour
     public Character Opponent { get; private set; }
     [SerializeField] private Animator guyAnim;
     [SerializeField] private float speed = 10;
-    [SerializeField] private float attackCd = 1.5f;
-    [SerializeField] private Rigidbody rb;
+    [SerializeField] protected Rigidbody rb;
     [SerializeField] private GameObject AttackHitBox;
     [SerializeField] private string enemyTag;
-    private float rightTimer = 0f;
-    private float leftTimer = 0f;
-    private bool isAttacking = false;
+    protected const float attackCd = 2.25f;
+    protected float rightTimer = 0f;
+    protected float leftTimer = 0f;
+    protected float uppercutTimer = 0f;
+    public bool isAttacking = false;
     private string attackType = "";
-    private bool isHurt = false;
+    public bool isHurt = false;
 
     // === MASK SYSTEM ===
     [Header("Mask Settings")]
@@ -34,6 +35,7 @@ public abstract class Character : MonoBehaviour
     {
         rightTimer = attackCd;
         leftTimer = attackCd;
+        uppercutTimer = attackCd;
         InitializeMasks();
     }
 
@@ -74,7 +76,7 @@ public abstract class Character : MonoBehaviour
 
         MaskObject topMask = masks[masks.Count - 1];
         masks.RemoveAt(masks.Count - 1);
-        Destroy(topMask.gameObject);
+        topMask.PopMask();
 
         // Check if character is defeated
         if (masks.Count == 0)
@@ -101,7 +103,17 @@ public abstract class Character : MonoBehaviour
     {
         rightTimer += Time.deltaTime;
         leftTimer += Time.deltaTime;
+        uppercutTimer += Time.deltaTime;
         LookAtOpponent();
+
+        if(rb.linearVelocity.magnitude > 0f)
+        {
+            Vector3 deltaPos = transform.position + rb.linearVelocity * Time.deltaTime;
+            if (GameManager.Instance.IsOutOfBounds(deltaPos)) 
+            {
+                rb.linearVelocity *= -1f;
+            }
+        }
     }
 
     public void Move(Vector3 dir)
@@ -121,6 +133,7 @@ public abstract class Character : MonoBehaviour
 
     public void LookAtOpponent()
     {
+        if (isHurt) return;
         transform.LookAt(Opponent.transform.position);
     }
 
@@ -128,18 +141,8 @@ public abstract class Character : MonoBehaviour
     {
         if (leftTimer <= attackCd || isAttacking || isHurt) return;
         leftTimer = 0f;
-        if(!IsAtEnemyArea)
-        {
-            guyAnim.SetTrigger("PunchL");
-            attackType = "left";
-        }
-        else
-        {
-            guyAnim.SetTrigger("Uppercut");
-            attackType = "up";
-            rightTimer = 0f;
-        }
-
+        guyAnim.SetTrigger("PunchL");
+        attackType = "left";
         isAttacking = true;
     }
 
@@ -147,17 +150,17 @@ public abstract class Character : MonoBehaviour
     {
         if (rightTimer <= attackCd || isAttacking || isHurt) return;
         rightTimer = 0f;
-        if (!IsAtEnemyArea)
-        {
-            guyAnim.SetTrigger("PunchR");
-            attackType = "right";
-        }
-        else
-        {
-            guyAnim.SetTrigger("Uppercut");
-            attackType = "up";
-            leftTimer = 0f;
-        }
+        guyAnim.SetTrigger("PunchR");
+        attackType = "right";
+        isAttacking = true;
+    }
+
+    public void UpperCut()
+    {
+        if (uppercutTimer <= attackCd || isAttacking || isHurt) return;
+        uppercutTimer = 0f;
+        guyAnim.SetTrigger("Uppercut");
+        attackType = "up";
         isAttacking = true;
     }
 
@@ -196,14 +199,18 @@ public abstract class Character : MonoBehaviour
         {
             guyAnim.SetTrigger("HitUp");
         }
-        rb.AddForce(Vector3.back * 100f);
+        rb.AddForce(-transform.forward.normalized * 10f, ForceMode.Impulse);
         DisableHitbox();
         isAttacking = false;
+        guyAnim.SetFloat("MoveX", 0f);
+        guyAnim.SetFloat("MoveY", 0f);
     }
 
     public void EndHurt()
     {
         isHurt = false;
+        DisableHitbox();
+        isAttacking = false;
     }
 
     private void OnTriggerEnter(Collider other)

@@ -14,13 +14,13 @@ public class AiCharacter : Character
     }
 
     private AiState currentState = AiState.Idle;
-    private readonly float idleTime = 2f;
+    private readonly float idleTime = 0.5f;
     private float idleTimer = 0f;
-    private readonly float moveTime = 1f;
+    private readonly float moveTime = 0.25f;
     private float moveTimer = 1f;
     private Vector3 currentDir = Vector3.zero;
 
-    private readonly float defensiveTime = 0.5f;
+    private readonly float defensiveTime = 1f;
     private float defensiveTimer = 0f;
 
 
@@ -41,12 +41,16 @@ public class AiCharacter : Character
             default:
                 break;
         }
+        if (isHurt)
+        {
+            currentState = Random.Range(0, 2) == 0 ? AiState.Offensive : AiState.Defensive;
+        }
     }
 
     private void HandleIdle()
     {
         moveTimer += Time.deltaTime;
-        if(moveTimer > moveTime)
+        if (moveTimer > moveTime)
         {
             currentDir = GetRandomDir();
             moveTimer = 0f;
@@ -54,7 +58,7 @@ public class AiCharacter : Character
         Move(currentDir);
 
         idleTimer += Time.deltaTime;
-        if (idleTimer > idleTime) 
+        if (idleTimer > idleTime)
         {
             currentState = AiState.Offensive;
             idleTimer = 0f;
@@ -64,11 +68,9 @@ public class AiCharacter : Character
     private void HandleOffensive()
     {
         Move(Opponent.transform.position - transform.position);
-        if (Vector2.Distance(transform.position, Opponent.transform.position) < 1)
+        if (IsInAttackRange())
         {
-            LeftAttack();
-            RightAttack();
-            currentState = AiState.Defensive;
+            Attack();
         }
     }
 
@@ -76,13 +78,47 @@ public class AiCharacter : Character
     {
         Move(transform.position - Opponent.transform.position);
         defensiveTimer += Time.deltaTime;
-        if(defensiveTimer > defensiveTime)
+        if (defensiveTimer > defensiveTime)
         {
             defensiveTimer = 0f;
             currentState = AiState.Idle;
         }
+        if (IsInAttackRange())
+        {
+            Attack();
+        }
     }
 
+    private bool IsInAttackRange()
+    {
+        return Vector2.Distance(transform.position, Opponent.transform.position) < 1f;
+    }
+
+    private void Attack()
+    {
+        currentState = AiState.Idle;
+        defensiveTimer = 0f;
+
+        if (Opponent.isHurt) return;
+
+        if (leftTimer > attackCd)
+        {
+            LeftAttack();
+            return;
+        }
+
+        if (rightTimer > attackCd)
+        {
+            RightAttack();
+            return;
+        }
+
+        if (uppercutTimer > attackCd)
+        {
+            UpperCut();
+            return;
+        }
+    }
 
     /// <summary>
     /// Simple function to get a random direction

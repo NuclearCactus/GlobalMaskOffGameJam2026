@@ -28,7 +28,6 @@ public class PlayerCharacter : Character
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private Rigidbody rb;
 
     private List<AttackType> currentInputs = new List<AttackType>();
     private float lastInputTime;
@@ -145,6 +144,6 @@ public class PlayerCharacter : Character
 
         Vector3 move = (transform.forward * z) + (transform.right * x);
         Vector3 targetVel = move.normalized * moveSpeed;
-        rb.velocity = Vector3.Lerp(rb.velocity, new Vector3(targetVel.x, rb.velocity.y, targetVel.z), 10f * Time.deltaTime);
+        Move(targetVel);
     }
 }

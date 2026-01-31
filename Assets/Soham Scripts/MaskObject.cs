@@ -25,6 +25,18 @@ public class MaskObject : MonoBehaviour
         meshRenderer.SetPropertyBlock(propertyBlock);
     }
 
+    public void PopMask()
+    {
+        transform.parent = null;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        float force = Random.Range(5f, 20f);
+        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+        float torque = Random.Range(5f, 60f);
+        rb.AddTorque(transform.right * torque, ForceMode.Impulse);
+        GetComponent<BoxCollider>().enabled = true;
+    }
+
     public MaskData GetData()
     {
         return data;

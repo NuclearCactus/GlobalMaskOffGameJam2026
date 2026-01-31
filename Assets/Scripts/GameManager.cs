@@ -91,11 +91,16 @@ public class GameManager : MonoBehaviour
 
     public Vector3 ClampCharacterPosInBounds(Vector3 deltaPos)
     {
-        if (Vector3.Distance(transform.position, deltaPos) >= radius)
+        if (IsOutOfBounds(deltaPos))
         {
             deltaPos = Vector3.ClampMagnitude(deltaPos, radius);
         }
 
         return deltaPos;
+    }
+
+    public bool IsOutOfBounds(Vector3 deltaPos)
+    {
+        return Vector3.Distance(transform.position, deltaPos) >= radius;
     }
 }
