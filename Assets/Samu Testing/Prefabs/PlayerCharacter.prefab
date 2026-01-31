@@ -199,6 +199,9 @@ MonoBehaviour:
   rb: {fileID: 6256395724797169519}
   AttackHitBox: {fileID: 2811001347415727123}
   enemyTag: Enemy
+  maskAnchor: {fileID: 0}
+  initialMaskCount: 5
+  maskSpacing: 0.01
 --- !u!54 &6256395724797169519
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -317,6 +320,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: b55edf2d6f013ad4682daf78213df9c9, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 4d316f0fdf1c6b94183564badde0c96d, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
