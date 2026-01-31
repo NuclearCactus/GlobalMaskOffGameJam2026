@@ -10,11 +10,6 @@ public class AiCharacter : Character
     private float timer = 0.0f;
     Vector3 currentDir = Vector3.zero;
 
-    private void Start()
-    {
-        currentDir = GetRandomDir();
-    }
-
     protected override void Update()
     {
         base.Update();

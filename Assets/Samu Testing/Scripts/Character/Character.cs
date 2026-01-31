@@ -9,7 +9,15 @@ public abstract class Character : MonoBehaviour
 {
     public bool IsAtEnemyArea;
     public Character Opponent {  get; private set; }
+    [SerializeField] private Animator guyAnim;
     [SerializeField] private float speed = 10;
+    [SerializeField] private float attackCd = 1.5f;
+    private float attackTimer = 0f;
+
+    private void Start()
+    {
+        attackTimer = attackCd;
+    }
 
     /// <summary>
     /// Sets the opponent that this character is looking at
@@ -27,6 +35,7 @@ public abstract class Character : MonoBehaviour
     protected virtual void Update()
     {
         LookAtOpponent();
+        attackTimer += Time.deltaTime;
     }
 
     /// <summary>
@@ -44,5 +53,22 @@ public abstract class Character : MonoBehaviour
     public void LookAtOpponent()
     {
         transform.LookAt(Opponent.transform.position);
+    }
+
+    public void StartAttack()
+    {
+        if (attackTimer <= attackCd) return;
+        attackTimer = 0f;
+        guyAnim.SetTrigger("PunchL");
+    }
+
+    public void EnableHitbox()
+    {
+
+    }
+
+    public void DisableHitbox()
+    {
+
     }
 }

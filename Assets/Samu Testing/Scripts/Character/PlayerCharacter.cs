@@ -30,5 +30,9 @@ public class PlayerCharacter : Character
         {
             Move(MovementDir);
         }
+        if(Mouse.current.leftButton.isPressed)
+        {
+            StartAttack();
+        }
     }
 }
