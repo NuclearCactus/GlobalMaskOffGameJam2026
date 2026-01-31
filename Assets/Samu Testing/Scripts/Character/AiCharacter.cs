@@ -6,23 +6,81 @@ using UnityEngine;
 /// </summary>
 public class AiCharacter : Character
 {
-    [SerializeField] private float MovementTimer = 2f;
-    private float timer = 0.0f;
-    Vector3 currentDir = Vector3.zero;
+    private enum AiState
+    {
+        Idle,
+        Offensive,
+        Defensive
+    }
+
+    private AiState currentState = AiState.Idle;
+    private readonly float idleTime = 2f;
+    private float idleTimer = 0f;
+    private readonly float moveTime = 1f;
+    private float moveTimer = 1f;
+    private Vector3 currentDir = Vector3.zero;
+
+    private readonly float defensiveTime = 0.5f;
+    private float defensiveTimer = 0f;
+
 
     protected override void Update()
     {
         base.Update();
-        // Change AI movement direction every x seconds
-        timer += Time.deltaTime;
-        if (timer > MovementTimer)
+        switch (currentState)
+        {
+            case AiState.Idle:
+                HandleIdle();
+                break;
+            case AiState.Offensive:
+                HandleOffensive();
+                break;
+            case AiState.Defensive:
+                HandleDefensive();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void HandleIdle()
+    {
+        moveTimer += Time.deltaTime;
+        if(moveTimer > moveTime)
         {
             currentDir = GetRandomDir();
-            timer = 0.0f;
-            LeftAttack();
+            moveTimer = 0f;
         }
-
         Move(currentDir);
+
+        idleTimer += Time.deltaTime;
+        if (idleTimer > idleTime) 
+        {
+            currentState = AiState.Offensive;
+            idleTimer = 0f;
+        }
+    }
+
+    private void HandleOffensive()
+    {
+        Move(Opponent.transform.position - transform.position);
+        if (Vector2.Distance(transform.position, Opponent.transform.position) < 1)
+        {
+            LeftAttack();
+            RightAttack();
+            currentState = AiState.Defensive;
+        }
+    }
+
+    private void HandleDefensive()
+    {
+        Move(transform.position - Opponent.transform.position);
+        defensiveTimer += Time.deltaTime;
+        if(defensiveTimer > defensiveTime)
+        {
+            defensiveTimer = 0f;
+            currentState = AiState.Idle;
+        }
     }
 
 

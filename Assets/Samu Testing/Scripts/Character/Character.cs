@@ -55,7 +55,7 @@ public abstract class Character : MonoBehaviour
     {
         if (isAttacking || isHurt) return;
 
-        Vector3 deltaPos = transform.position + (speed * Time.fixedDeltaTime * dir);
+        Vector3 deltaPos = transform.position + (speed * Time.fixedDeltaTime * dir.normalized);
 
         deltaPos = GameManager.Instance.ClampCharacterPosInBounds(deltaPos);
 
