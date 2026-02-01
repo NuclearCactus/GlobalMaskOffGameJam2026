@@ -54,9 +54,9 @@ public class PlayerCharacter : Character
             if(c.cam != null) c.cam.Priority = 0;
         }
 
-        // Hide the cooldown bar at start
+        // Start fully filled
         if (CooldownBar != null)
-            CooldownBar.gameObject.SetActive(false);
+            CooldownBar.fillAmount = 1f;
     }
 
     protected override void FixedUpdate()
@@ -72,25 +72,21 @@ public class PlayerCharacter : Character
         UpdateCooldownBar();
     }
 
+     // ─── COOLDOWN BAR ────────────────────────────────────────────────────────
+
     /// <summary>
-    /// Called immediately when an attack is performed to activate the bar at full width.
+    /// Called immediately when an attack is performed. Drains the bar to 0 instantly.
     /// </summary>
     private void ActivateCooldownBar(AttackType type)
     {
         activeBarType = type;
         if (CooldownBar != null)
-        {
-            CooldownBar.gameObject.SetActive(true);
-            // Reset X scale to 1 (full bar)
-            Vector3 s = CooldownBar.transform.localScale;
-            s.x = 1f;
-            CooldownBar.transform.localScale = s;
-        }
+            CooldownBar.fillAmount = 1f;
     }
 
     /// <summary>
-    /// Every frame: reads the current timer for the active attack and shrinks the bar proportionally.
-    /// Hides the bar once the cooldown is complete.
+    /// Every frame: fills the bar back up based on how far along the cooldown timer is.
+    /// Once full, clears the active type so it stops updating.
     /// </summary>
     private void UpdateCooldownBar()
     {
@@ -98,7 +94,6 @@ public class PlayerCharacter : Character
 
         float timer, cooldown;
 
-        // Pull the matching timer and cooldown duration from the base class
         switch (activeBarType.Value)
         {
             case AttackType.Left:
@@ -118,20 +113,11 @@ public class PlayerCharacter : Character
         }
 
         // ratio goes from 0 (just attacked) → 1 (cooldown finished)
-        // We want the bar to shrink, so we invert it: 1 - ratio
-        float ratio = Mathf.Clamp01(timer / cooldown);
-        float barScale = 1f - ratio;
+        CooldownBar.fillAmount = Mathf.Clamp01(timer / cooldown);
 
-        Vector3 s = CooldownBar.transform.localScale;
-        s.x = barScale;
-        CooldownBar.transform.localScale = s;
-
-        // Once fully depleted, hide the bar and clear the active type
-        if (barScale <= 0f)
-        {
-            CooldownBar.gameObject.SetActive(false);
+        // Once fully refilled, stop tracking
+        if (CooldownBar.fillAmount >= 1f)
             activeBarType = null;
-        }
     }
 
     private void HandleAttacks()
