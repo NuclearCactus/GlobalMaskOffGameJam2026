@@ -295,6 +295,7 @@ public abstract class Character : MonoBehaviour
         if (isHurt || isAttacking || dashTimer <= dashCd) return;
 
         isDashing = true;
+        dashTimer = 0f;
         guyAnim.SetTrigger("Dash");
         rb.linearVelocity = Vector3.zero;
         Vector3 dir = new(currentMoveX, 0f, currentMoveY);

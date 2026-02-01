@@ -91,6 +91,11 @@ public class AiCharacter : Character
             defensiveTimer = 0f;
             currentState = AiState.Idle;
         }
+
+        if (dashTimer > dashCd && IsInAttackRange())
+        {
+            StartDash();
+        }
     }
 
     private bool IsInAttackRange()
@@ -105,7 +110,7 @@ public class AiCharacter : Character
 
         if (Opponent.isHurt) return;
 
-        if (uppercutTimer > uppercutTimer)
+        if (uppercutTimer > upperCutCd)
         {
             UpperCut();
             return;
