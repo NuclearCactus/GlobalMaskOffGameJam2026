@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6290135344866480184}
   - component: {fileID: 7182488278610179456}
   - component: {fileID: 458508699830355580}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: MaskPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,6 +215,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: cb315602ddd3b6f49b72375ea9bb9ebe, type: 3}
       propertyPath: m_Name
       value: MaskPlane
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: cb315602ddd3b6f49b72375ea9bb9ebe, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
