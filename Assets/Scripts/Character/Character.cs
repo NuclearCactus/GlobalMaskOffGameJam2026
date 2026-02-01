@@ -3,6 +3,7 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
+    [SerializeField] private SoundManager soundManager;
     [SerializeField] private Animator guyAnim;
     [SerializeField] private float speed = 10;
     [SerializeField] protected Rigidbody rb;
@@ -237,6 +238,7 @@ public abstract class Character : MonoBehaviour
     public void EnableHitbox()
     {
         AttackHitBox.SetActive(true);
+        soundManager.PlaySound(SoundType.PunchSwing);
     }
 
     public void DisableHitbox()
@@ -253,6 +255,7 @@ public abstract class Character : MonoBehaviour
     {
         if (isHurt || isDashing) return;
         isHurt = true;
+        soundManager.PlaySound(SoundType.PunchHit);
 
 
         if (attackDirection == "left")
@@ -300,6 +303,7 @@ public abstract class Character : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         Vector3 dir = new(currentMoveX, 0f, currentMoveY);
         rb.AddForce(dir * 8f, ForceMode.Impulse);
+        soundManager.PlaySound(SoundType.PunchSwing);
     }
 
     public void EndDash()

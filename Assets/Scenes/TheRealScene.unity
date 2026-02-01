@@ -511,16 +511,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
-      propertyPath: speed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
       propertyPath: sloMoSpeed
       value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
-      propertyPath: maskSpacing
-      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
       propertyPath: defaultCamera
@@ -693,6 +685,7 @@ MonoBehaviour:
   topArenaObj: {fileID: 13190187}
   bottomArenaObj: {fileID: 664594299}
   changeSideTime: 1
+  radius: 8
 --- !u!4 &1205396653
 Transform:
   m_ObjectHideFlags: 0
@@ -1524,14 +1517,6 @@ PrefabInstance:
     - target: {fileID: 2908112832305347870, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_Name
       value: AiCharacter
-      objectReference: {fileID: 0}
-    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
-      propertyPath: speed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
-      propertyPath: maskSpacing
-      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 5058976210347502256, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_LocalPosition.x
