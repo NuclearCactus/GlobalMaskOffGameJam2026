@@ -29,9 +29,9 @@ public abstract class Character : MonoBehaviour
 
     // === MASK SYSTEM ===
     [Header("Mask Settings")]
-    [SerializeField] private Transform maskAnchor; // Assign the head/face transform in inspector
+    [SerializeField] private Transform maskAnchor;
     [SerializeField] private int initialMaskCount = 5;
-    [SerializeField] private float maskSpacing = 0.01f; // Horizontal spacing between stacked masks
+    [SerializeField] private float maskSpacing = 0.01f;
 
     private List<MaskObject> masks = new List<MaskObject>();
     private Transform topMask;
@@ -55,9 +55,6 @@ public abstract class Character : MonoBehaviour
         InitializeMasks();
     }
 
-    /// <summary>
-    /// Creates the initial stack of masks on the character's face
-    /// </summary>
     private void InitializeMasks()
     {
         for (int i = 0; i < initialMaskCount; i++)
@@ -66,22 +63,15 @@ public abstract class Character : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Adds a random mask to the stack
-    /// </summary>
     private void AddRandomMask()
     {
         MaskObject newMask = NewMaskManager.Instance.CreateRandomMask();
-
         AddMask(newMask);
     }
 
     public void AddMask(MaskObject newMask)
     {
-        // Parent to the mask anchor (head)
         newMask.transform.SetParent(maskAnchor, false);
-
-        // Position it in the stack (each mask slightly forward/outward)
         newMask.transform.SetLocalPositionAndRotation(new Vector3(0, masks.Count * maskSpacing, 0), Quaternion.identity);
 
         if (topMask != null)
@@ -95,17 +85,22 @@ public abstract class Character : MonoBehaviour
     }
 
     /// <summary>
-    /// Removes and destroys the top mask (when taking damage)
+    /// Removes and destroys the top mask. Returns the phrase from the removed mask's data,
+    /// or an empty string if there was nothing to remove.
     /// </summary>
-    public void RemoveTopMask()
+    public string RemoveTopMask()
     {
-        if (masks.Count == 0) return;
+        if (masks.Count == 0) return "";
 
         MaskObject maskToBeRemoved = masks[masks.Count - 1];
+
+        // Grab the phrase before we pop it — the data is still valid after PopMask,
+        // but reading it here keeps intent obvious.
+        string phrase = maskToBeRemoved.GetData()?.popUpPhrase ?? "";
+
         masks.RemoveAt(masks.Count - 1);
         maskToBeRemoved.PopMask();
 
-        // Check if character is defeated
         if (masks.Count == 0)
         {
             OnDefeated();
@@ -115,36 +110,48 @@ public abstract class Character : MonoBehaviour
             topMask = masks[^1].transform;
             topMask.localScale = topMaskScale;
         }
-    }
 
-    public void StealTopMask()
-    {
-        if (masks.Count == 0) return;
-
-        MaskObject maskToBeRemoved = masks[masks.Count - 1];
-        masks.RemoveAt(masks.Count - 1);
-        maskToBeRemoved.StealMask(Opponent);
-
-        // Check if character is defeated
-        if (masks.Count == 0)
-        {
-            OnDefeated();
-        }
-        else
-        {
-            topMask = masks[^1].transform;
-            topMask.localScale = topMaskScale;
-        }
+        return phrase;
     }
 
     /// <summary>
-    /// Called when character runs out of masks
+    /// Steals the top mask and transfers it to the opponent. Returns the phrase
+    /// from the stolen mask's data, or an empty string if there was nothing to steal.
     /// </summary>
+    public string StealTopMask()
+    {
+        if (masks.Count == 0) return "";
+
+        MaskObject maskToBeRemoved = masks[masks.Count - 1];
+
+        string phrase = maskToBeRemoved.GetData()?.popUpPhrase ?? "";
+
+        masks.RemoveAt(masks.Count - 1);
+        maskToBeRemoved.StealMask(Opponent);
+
+        if (masks.Count == 0)
+        {
+            OnDefeated();
+        }
+        else
+        {
+            topMask = masks[^1].transform;
+            topMask.localScale = topMaskScale;
+        }
+
+        return phrase;
+    }
+
     protected virtual void OnDefeated()
     {
         Debug.Log($"{gameObject.name} has been defeated!");
-        // Override in PlayerCharacter or AiCharacter for specific behavior
     }
+
+    /// <summary>
+    /// Called on the attacker when one of their hits successfully lands.
+    /// The phrase is the popUpPhrase from the mask that was just removed or stolen.
+    /// </summary>
+    protected virtual void OnHitLanded(string phrase) { }
 
     public void SetOpponent(Character opponent)
     {
@@ -257,28 +264,28 @@ public abstract class Character : MonoBehaviour
         isHurt = true;
         soundManager.PlaySound(SoundType.PunchHit);
 
+        // Each branch removes/steals a mask and captures the phrase it returns
+        string phrase = "";
 
         if (attackDirection == "left")
         {
             guyAnim.SetTrigger("HitLeft");
-
-            // Remove a mask when hurt
-            RemoveTopMask();
+            phrase = RemoveTopMask();
         }
         if (attackDirection == "right")
         {
             guyAnim.SetTrigger("HitRight");
-
-            // Remove a mask when hurt
-            RemoveTopMask();
+            phrase = RemoveTopMask();
         }
         if (attackDirection == "up")
         {
             guyAnim.SetTrigger("HitUp");
-
-            // Remove a mask when hurt
-            StealTopMask();
+            phrase = StealTopMask();
         }
+
+        // Notify the attacker, passing along the phrase from the mask that was just taken
+        Opponent?.OnHitLanded(phrase);
+
         rb.AddForce((attackDirection == "up" ? 3f : 1f) * 3f * -transform.forward.normalized, ForceMode.Impulse);
         DisableHitbox();
         isAttacking = false;
