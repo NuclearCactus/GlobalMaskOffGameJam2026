@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class PlayerCharacter : Character
 {
@@ -16,6 +17,8 @@ public class PlayerCharacter : Character
         [Tooltip("Assign the specific CinemachineCamera from your scene here")]
         public CinemachineCamera cam; 
     }
+
+    public Image CooldownBar;
 
     [Header("Camera Setup")]
     [Tooltip("Assign your main 3rd person gameplay camera here")]
@@ -35,6 +38,9 @@ public class PlayerCharacter : Character
     private List<AttackType> currentInputs = new List<AttackType>();
     private float lastInputTime;
 
+    // Tracks which attack's cooldown is currently being displayed
+    private AttackType? activeBarType = null;
+
     private void Awake()
     {
         if (rb == null) rb = GetComponent<Rigidbody>();
@@ -47,6 +53,10 @@ public class PlayerCharacter : Character
         {
             if(c.cam != null) c.cam.Priority = 0;
         }
+
+        // Start fully filled
+        if (CooldownBar != null)
+            CooldownBar.fillAmount = 1f;
     }
 
     protected override void FixedUpdate()
@@ -59,6 +69,55 @@ public class PlayerCharacter : Character
     {
         HandleMovement();
         HandleAttacks();
+        UpdateCooldownBar();
+    }
+
+     // ─── COOLDOWN BAR ────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Called immediately when an attack is performed. Drains the bar to 0 instantly.
+    /// </summary>
+    private void ActivateCooldownBar(AttackType type)
+    {
+        activeBarType = type;
+        if (CooldownBar != null)
+            CooldownBar.fillAmount = 1f;
+    }
+
+    /// <summary>
+    /// Every frame: fills the bar back up based on how far along the cooldown timer is.
+    /// Once full, clears the active type so it stops updating.
+    /// </summary>
+    private void UpdateCooldownBar()
+    {
+        if (CooldownBar == null || activeBarType == null) return;
+
+        float timer, cooldown;
+
+        switch (activeBarType.Value)
+        {
+            case AttackType.Left:
+                timer    = leftTimer;
+                cooldown = attackCd;
+                break;
+            case AttackType.Right:
+                timer    = rightTimer;
+                cooldown = attackCd;
+                break;
+            case AttackType.Uppercut:
+                timer    = uppercutTimer;
+                cooldown = upperCutCd;
+                break;
+            default:
+                return;
+        }
+
+        // ratio goes from 0 (just attacked) → 1 (cooldown finished)
+        CooldownBar.fillAmount = Mathf.Clamp01(timer / cooldown);
+
+        // Once fully refilled, stop tracking
+        if (CooldownBar.fillAmount >= 1f)
+            activeBarType = null;
     }
 
     private void HandleAttacks()
@@ -75,23 +134,26 @@ public class PlayerCharacter : Character
         {
             type = AttackType.Left;
             pressed = true;
+            ActivateCooldownBar(AttackType.Left);
         }
         else if (Mouse.current.rightButton.wasPressedThisFrame && RightAttack())
         {
             type = AttackType.Right;
             pressed = true;
+            ActivateCooldownBar(AttackType.Right);
         }
         else if(Keyboard.current.spaceKey.wasPressedThisFrame && UpperCut())
         {
             type = AttackType.Uppercut;
             pressed = true;
+            ActivateCooldownBar(AttackType.Uppercut);
         }
         
         if(Keyboard.current.eKey.wasPressedThisFrame)
         {
             StartDash();
         }
-        
+
         // If an attack happened, record it and check for combos
         if (pressed)
         {
