@@ -1487,7 +1487,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1883800942}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14376888, y: -0.14628553, z: 0.021493338, w: 0.9785035}
+  m_LocalRotation: {x: 0.14370315, y: -0.1492473, z: 0.021928502, w: 0.97805613}
   m_LocalPosition: {x: 2.38, y: 2.93, z: -7.5499997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1903,7 +1903,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1974034957}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14376888, y: -0.1462855, z: 0.021493334, w: 0.9785035}
+  m_LocalRotation: {x: 0.14370315, y: -0.1492473, z: 0.021928502, w: 0.97805613}
   m_LocalPosition: {x: 2.38, y: 2.93, z: -7.5499997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2117,6 +2117,10 @@ PrefabInstance:
       propertyPath: heartParticle
       value: 
       objectReference: {fileID: 2052181278063233572, guid: 29d388be8fdf64503a546cb95e423c78, type: 3}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: initialMaskCount
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: heartParticlePrefab
       value: 

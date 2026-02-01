@@ -141,9 +141,16 @@ public abstract class Character : MonoBehaviour
     protected virtual void OnDefeated()
     {
         Debug.Log($"{gameObject.name} has been defeated!");
-        PersistentManager.Instance.PlayerWins = TryGetComponent<PlayerCharacter>(out var _);
+        bool didplayerwin = TryGetComponent<PlayerCharacter>(out var _);
         // Override in PlayerCharacter or AiCharacter for specific behavior
-        SceneManager.LoadScene("Ending");
+    
+        if (didplayerwin){
+            SceneManager.LoadScene("Winscene");
+        }
+        else
+        {
+            SceneManager.LoadScene("Losescene");
+        }
     }
 
     /// <summary>

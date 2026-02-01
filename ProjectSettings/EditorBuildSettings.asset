@@ -26,6 +26,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/menu/Ending.unity
     guid: b86bab966f7c141dca909713b35d42ec
+  - enabled: 1
+    path: Assets/Scenes/menu/startScene.unity
+    guid: 55bfd67c0bb0740c390561953060ec68
+  - enabled: 1
+    path: Assets/Scenes/menu/Winscene.unity
+    guid: d0d6e25430d8c4cd1954c0f612677162
+  - enabled: 1
+    path: Assets/Scenes/menu/Losescene.unity
+    guid: bb4ae24e7e4a34335b4f3e27e0dcb0af
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
