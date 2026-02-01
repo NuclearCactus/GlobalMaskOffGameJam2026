@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "PauseAction",
+    "maps": [
+        {
+            "name": "pause",
+            "id": "bbdc40db-4fac-4930-b57e-693b7f9e8fa8",
+            "actions": [
+                {
+                    "name": "Pausegame",
+                    "type": "Button",
+                    "id": "cf0bd2b9-da6e-47cc-bea5-ac74c90e82fe",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "05ec047a-82f5-4497-a5b4-3fd01095fc1e",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pausegame",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
