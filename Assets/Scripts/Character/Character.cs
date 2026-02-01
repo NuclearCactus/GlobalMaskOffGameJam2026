@@ -1,22 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class Character : MonoBehaviour
 {
+    [SerializeField] private GameObject heartParticlePrefab;
     [SerializeField] private SoundManager soundManager;
     [SerializeField] private Animator guyAnim;
     [SerializeField] private float speed = 10;
     [SerializeField] protected Rigidbody rb;
     [SerializeField] private GameObject AttackHitBox;
     [SerializeField] private string enemyTag;
-    [SerializeField] protected float attackCd = 1f;
-    [SerializeField] protected float upperCutCd = 3f; 
+    [SerializeField] protected float attackCd = 2f;
     [SerializeField] protected float dashCd = 1.5f;
 
-    protected float rightTimer = 0f;
-    protected float leftTimer = 0f;
-    protected float uppercutTimer = 0f;
-    protected float dashTimer = 1.5f;
+    protected float maxStamina = 3f;
+    protected float stamina = 2f;
     private string attackType = "";
 
     public bool isHurt = false;
@@ -49,9 +48,6 @@ public abstract class Character : MonoBehaviour
 
     private void Start()
     {
-        rightTimer = attackCd;
-        leftTimer = attackCd;
-        uppercutTimer = attackCd;
         InitializeMasks();
     }
 
@@ -143,7 +139,9 @@ public abstract class Character : MonoBehaviour
     protected virtual void OnDefeated()
     {
         Debug.Log($"{gameObject.name} has been defeated!");
+        PersistentManager.Instance.PlayerWins = TryGetComponent<PlayerCharacter>(out var _);
         // Override in PlayerCharacter or AiCharacter for specific behavior
+        SceneManager.LoadScene("Ending");
     }
 
     public void SetOpponent(Character opponent)
@@ -153,10 +151,8 @@ public abstract class Character : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        rightTimer += Time.fixedDeltaTime;
-        leftTimer += Time.fixedDeltaTime;
-        uppercutTimer += Time.fixedDeltaTime;
-        dashTimer += Time.fixedDeltaTime;
+        if (stamina < maxStamina)
+            stamina += Time.fixedDeltaTime;
         LookAtOpponent();
 
         if (rb.linearVelocity.magnitude > 0f)
@@ -207,8 +203,8 @@ public abstract class Character : MonoBehaviour
 
     public bool LeftAttack()
     {
-        if (leftTimer <= attackCd || isAttacking || isHurt || isDashing) return false;
-        leftTimer = 0f;
+        if (stamina < attackCd || isAttacking || isHurt || isDashing) return false;
+        stamina -= attackCd;
         guyAnim.SetTrigger("PunchL");
         attackType = "left";
         isAttacking = true;
@@ -217,8 +213,8 @@ public abstract class Character : MonoBehaviour
 
     public bool RightAttack()
     {
-        if (rightTimer <= attackCd || isAttacking || isHurt || isDashing) return false;
-        rightTimer = 0f;
+        if (stamina < attackCd || isAttacking || isHurt || isDashing) return false;
+        stamina -= attackCd;
         guyAnim.SetTrigger("PunchR");
         attackType = "right";
         isAttacking = true;
@@ -227,8 +223,8 @@ public abstract class Character : MonoBehaviour
 
     public bool UpperCut()
     {
-        if (uppercutTimer <= upperCutCd || isAttacking || isHurt || isDashing) return false;
-        uppercutTimer = 0f;
+        if (stamina < attackCd || isAttacking || isHurt || isDashing) return false;
+        stamina -= attackCd * 2f;
         guyAnim.SetTrigger("Uppercut");
         attackType = "up";
         isAttacking = true;
@@ -295,10 +291,10 @@ public abstract class Character : MonoBehaviour
 
     public void StartDash()
     {
-        if (isHurt || isAttacking || dashTimer <= dashCd) return;
+        if (isHurt || isAttacking || stamina < dashCd) return;
 
         isDashing = true;
-        dashTimer = 0f;
+        stamina -= dashCd;
         guyAnim.SetTrigger("Dash");
         rb.linearVelocity = Vector3.zero;
         Vector3 dir = new(currentMoveX, 0f, currentMoveY);

@@ -217,7 +217,7 @@ Transform:
   m_GameObject: {fileID: 2811001347415727123}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 1.5}
+  m_LocalPosition: {x: 0, y: 1, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -589,6 +589,7 @@ Transform:
   - {fileID: 7066204993219785837}
   - {fileID: 8545931784876718359}
   - {fileID: 7026481986974239301}
+  - {fileID: 7786330359420868422}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6459688280735501593
@@ -603,14 +604,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69877d817060d1f429fe78cbc2e32fef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
+  heartParticlePrefab: {fileID: 0}
   soundManager: {fileID: 9106276204105225985}
   guyAnim: {fileID: 8062258562703126997}
   speed: 3
   rb: {fileID: 6256395724797169519}
   AttackHitBox: {fileID: 2811001347415727123}
   enemyTag: Enemy
-  attackCd: 1
-  upperCutCd: 3
+  attackCd: 2
   dashCd: 1.5
   isHurt: 0
   isAttacking: 0
@@ -619,11 +620,15 @@ MonoBehaviour:
   initialMaskCount: 20
   maskSpacing: 0.001
   IsAtEnemyArea: 0
+  CooldownBar: {fileID: 0}
   defaultCamera: {fileID: 0}
-  combos: []
+  combos:
+  - name: Knockout
+    inputChain: 02000000
+    cam: {fileID: 0}
   resetTime: 1
-  sloMoSpeed: 0.2
-  effectDuration: 1.5
+  sloMoSpeed: 0.3
+  effectDuration: 5
 --- !u!54 &6256395724797169519
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -674,6 +679,37 @@ CapsuleCollider:
   m_Height: 2.5
   m_Direction: 1
   m_Center: {x: 0, y: 1.25, z: 0}
+--- !u!1 &5720387680259330133
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7786330359420868422}
+  m_Layer: 0
+  m_Name: Shoulder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7786330359420868422
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5720387680259330133}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4069023686387145439}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4505975515475463236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -734,6 +770,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6448925115522420184, guid: 4d316f0fdf1c6b94183564badde0c96d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8b78711a8d838c540bb389ee26d5e1a9, type: 2}
     - target: {fileID: 919132149155446097, guid: 4d316f0fdf1c6b94183564badde0c96d, type: 3}
       propertyPath: m_Name
       value: guy

@@ -4,10 +4,11 @@ using Unity.Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using Unity.VisualScripting;
 
 public class PlayerCharacter : Character
 {
-    public enum AttackType { Left, Right, Uppercut }
+    public enum AttackType { Left, Right, Uppercut, Dash }
 
     [System.Serializable]
     public class Combo
@@ -15,18 +16,18 @@ public class PlayerCharacter : Character
         public string name;
         public List<AttackType> inputChain;
         [Tooltip("Assign the specific CinemachineCamera from your scene here")]
-        public CinemachineCamera cam; 
+        public CinemachineCamera cam;
     }
 
-    public Image CooldownBar;
+    [SerializeField] private Image CooldownBar;
 
     [Header("Camera Setup")]
     [Tooltip("Assign your main 3rd person gameplay camera here")]
-    [SerializeField] private CinemachineCamera defaultCamera; 
-    
+    [SerializeField] private CinemachineCamera defaultCamera;
+
     [Header("Combo Settings")]
-    [SerializeField] private List<Combo> combos; 
-    [SerializeField] private float resetTime = 1.0f; 
+    [SerializeField] private List<Combo> combos;
+    [SerializeField] private float resetTime = 1.0f;
 
     [Header("Cinematic Settings")]
     [SerializeField] private float sloMoSpeed = 0.2f;
@@ -48,10 +49,10 @@ public class PlayerCharacter : Character
 
         // SETUP: Ensure Default is active (10) and all Combo cameras are inactive (0)
         if (defaultCamera != null) defaultCamera.Priority = 10;
-        
-        foreach(var c in combos)
+
+        foreach (var c in combos)
         {
-            if(c.cam != null) c.cam.Priority = 0;
+            if (c.cam != null) c.cam.Priority = 0;
         }
 
         // Start fully filled
@@ -69,10 +70,10 @@ public class PlayerCharacter : Character
     {
         HandleMovement();
         HandleAttacks();
-        UpdateCooldownBar();
+        UpdateAttackCooldownBar();
     }
 
-     // ─── COOLDOWN BAR ────────────────────────────────────────────────────────
+    // ─── COOLDOWN BAR ────────────────────────────────────────────────────────
 
     /// <summary>
     /// Called immediately when an attack is performed. Drains the bar to 0 instantly.
@@ -88,25 +89,23 @@ public class PlayerCharacter : Character
     /// Every frame: fills the bar back up based on how far along the cooldown timer is.
     /// Once full, clears the active type so it stops updating.
     /// </summary>
-    private void UpdateCooldownBar()
+    private void UpdateAttackCooldownBar()
     {
-        if (CooldownBar == null || activeBarType == null) return;
+        if (CooldownBar == null ||activeBarType == null) return;
 
         float timer, cooldown;
 
         switch (activeBarType.Value)
         {
             case AttackType.Left:
-                timer    = leftTimer;
-                cooldown = attackCd;
-                break;
-            case AttackType.Right:
-                timer    = rightTimer;
-                cooldown = attackCd;
-                break;
             case AttackType.Uppercut:
-                timer    = uppercutTimer;
-                cooldown = upperCutCd;
+            case AttackType.Right:
+                timer = stamina;
+                cooldown = maxStamina;
+                break;
+            case AttackType.Dash:
+                timer = stamina;
+                cooldown = maxStamina;
                 break;
             default:
                 return;
@@ -142,16 +141,17 @@ public class PlayerCharacter : Character
             pressed = true;
             ActivateCooldownBar(AttackType.Right);
         }
-        else if(Keyboard.current.spaceKey.wasPressedThisFrame && UpperCut())
+        else if (Keyboard.current.spaceKey.wasPressedThisFrame && UpperCut())
         {
             type = AttackType.Uppercut;
             pressed = true;
             ActivateCooldownBar(AttackType.Uppercut);
         }
-        
-        if(Keyboard.current.eKey.wasPressedThisFrame)
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             StartDash();
+            ActivateCooldownBar(AttackType.Dash);
         }
 
         // If an attack happened, record it and check for combos
@@ -196,7 +196,7 @@ public class PlayerCharacter : Character
 
         // 1. Switch TO Finisher Camera
         // We set Priority to 20 to override the Default Camera (which is 10)
-        targetCam.Priority = 20; 
+        targetCam.Priority = 20;
 
         // 2. Apply Slow Motion
         Time.timeScale = sloMoSpeed;
@@ -206,7 +206,7 @@ public class PlayerCharacter : Character
         yield return new WaitForSecondsRealtime(effectDuration);
 
         // 4. Switch BACK to Default
-        targetCam.Priority = 0; 
+        targetCam.Priority = 0;
 
         // 5. Reset Time
         Time.timeScale = 1f;
