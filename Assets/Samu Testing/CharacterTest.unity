@@ -355,6 +355,14 @@ PrefabInstance:
       propertyPath: m_Interpolate
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
+      propertyPath: speed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
+      propertyPath: maskSpacing
+      value: 0.005
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 1092193231205641213, guid: 75753ed0840c74a49a4e641537385595, type: 3}
@@ -732,6 +740,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NewMaskManager
   maskPrefab: {fileID: 7613308658217885903, guid: cb436b5980d391d41adc31cb1b7bb779, type: 3}
   allMasks:
+  - {fileID: 11400000, guid: 5a9a3162f2003174d88a991accf4b040, type: 2}
+  - {fileID: 11400000, guid: d55f61caee315154f9af47f76bf25323, type: 2}
+  - {fileID: 11400000, guid: 73364dbfecfa666429fba34c1c2cc3a8, type: 2}
+  - {fileID: 11400000, guid: c8611ebce679af948b8b6366ecd1c0e9, type: 2}
+  - {fileID: 11400000, guid: 70a4481065f937a43a5bfe5256bd7919, type: 2}
+  - {fileID: 11400000, guid: 31958466c2cf3d9418fcfd6140cb0112, type: 2}
+  - {fileID: 11400000, guid: 487b22cfcbcc5144d900d85634a354f4, type: 2}
+  - {fileID: 11400000, guid: 0659f8a9865a4fa49ae5c446e4592afb, type: 2}
+  - {fileID: 11400000, guid: 1c1af3d7d58aca043b1d7351a67bc92b, type: 2}
+  - {fileID: 11400000, guid: 7e4f3633cb1908d4b958b5e5acd853a4, type: 2}
+  - {fileID: 11400000, guid: 21128abbf2caff84bb80e588f2f7b1ae, type: 2}
+  - {fileID: 11400000, guid: 0d1144c9224c3e64d9954444fe89c6d8, type: 2}
+  - {fileID: 11400000, guid: c146b376f47872745b72c9fce3c94bd9, type: 2}
+  - {fileID: 11400000, guid: a53bf7105ed29b448aa9de731a08e1ff, type: 2}
+  - {fileID: 11400000, guid: fb8bf5f9ed45f8545bf4484678c8be35, type: 2}
+  - {fileID: 11400000, guid: ee3a3188891bb114681469d7a777573c, type: 2}
+  - {fileID: 11400000, guid: 3fca7106d6bb6a443bc6fd087891f8d0, type: 2}
+  - {fileID: 11400000, guid: 891d09e46276113419e0a1fa87116420, type: 2}
+  - {fileID: 11400000, guid: d498da6a9ab4c9442836071d6de2db3d, type: 2}
+  - {fileID: 11400000, guid: 55542105a31753e4a9b0b5b9b0f487a1, type: 2}
   - {fileID: 11400000, guid: 1f6405f180438da4cb749d611d05334e, type: 2}
 --- !u!4 &1955294882
 Transform:
@@ -1032,6 +1060,14 @@ PrefabInstance:
     - target: {fileID: 2908112832305347870, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_Name
       value: AiCharacter
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: speed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: maskSpacing
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 5058976210347502256, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_LocalPosition.x

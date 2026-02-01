@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 685b8ef852d718c4db3180626a1766cb, type: 3}
-  m_Name: RealMask
+  m_Name: Stylized_sword
   m_EditorClassIdentifier: Assembly-CSharp::MaskData
-  texture: {fileID: 2800000, guid: 87c0e5aa3c076df4194e1bf1c0545f09, type: 3}
-  maskName: Harold
-  maskType: Real
+  texture: {fileID: 2800000, guid: 3eb35db81e0506648bce5f7c7744ada7, type: 3}
+  maskName: Sword
+  maskType: stylized

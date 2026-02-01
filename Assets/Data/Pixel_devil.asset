@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 685b8ef852d718c4db3180626a1766cb, type: 3}
-  m_Name: PixelMask
+  m_Name: Pixel_devil
   m_EditorClassIdentifier: Assembly-CSharp::MaskData
-  texture: {fileID: 2800000, guid: 87c0e5aa3c076df4194e1bf1c0545f09, type: 3}
-  maskName: Chad
-  maskType: Pixel
+  texture: {fileID: 2800000, guid: d28ab14916fdc6a40ae52583a433e0dd, type: 3}
+  maskName: Devil
+  maskType: pixel

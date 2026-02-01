@@ -23,6 +23,9 @@ public abstract class Character : MonoBehaviour
     [SerializeField] private float maskSpacing = 0.01f; // Horizontal spacing between stacked masks
 
     private List<MaskObject> masks = new List<MaskObject>();
+    private Transform topMask;
+    private Vector3 topMaskScale = new(0.01f, 0.01f, 0.01f);
+    private Vector3 maskScale = new(0.005f, 0.005f, 0.005f);
 
     // Public accessors
     public MaskObject TopMask => masks.Count > 0 ? masks[masks.Count - 1] : null;
@@ -71,7 +74,13 @@ public abstract class Character : MonoBehaviour
         // Position it in the stack (each mask slightly forward/outward)
         newMask.transform.SetLocalPositionAndRotation(new Vector3(0, masks.Count * maskSpacing, 0), Quaternion.identity);
 
-        newMask.transform.localScale = new(0.005f, 0.005f, 0.005f);
+        if (topMask != null)
+        {
+            topMask.localScale = maskScale;
+        }
+
+        newMask.transform.localScale = topMaskScale;
+        topMask = newMask.transform;
         masks.Add(newMask);
     }
 
@@ -82,14 +91,19 @@ public abstract class Character : MonoBehaviour
     {
         if (masks.Count == 0) return;
 
-        MaskObject topMask = masks[masks.Count - 1];
+        MaskObject maskToBeRemoved = masks[masks.Count - 1];
         masks.RemoveAt(masks.Count - 1);
-        topMask.PopMask();
+        maskToBeRemoved.PopMask();
 
         // Check if character is defeated
         if (masks.Count == 0)
         {
             OnDefeated();
+        }
+        else
+        {
+            topMask = masks[^1].transform;
+            topMask.localScale = topMaskScale;
         }
     }
 
@@ -97,14 +111,19 @@ public abstract class Character : MonoBehaviour
     {
         if (masks.Count == 0) return;
 
-        MaskObject topMask = masks[masks.Count - 1];
+        MaskObject maskToBeRemoved = masks[masks.Count - 1];
         masks.RemoveAt(masks.Count - 1);
-        topMask.StealMask(Opponent);
+        maskToBeRemoved.StealMask(Opponent);
 
         // Check if character is defeated
         if (masks.Count == 0)
         {
             OnDefeated();
+        }
+        else
+        {
+            topMask = masks[^1].transform;
+            topMask.localScale = topMaskScale;
         }
     }
 
