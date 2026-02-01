@@ -15,3 +15,4 @@ MonoBehaviour:
   texture: {fileID: 2800000, guid: 1315d58ed2755d84dad0e41772f46107, type: 3}
   maskName: Hollow Knight
   maskType: scribble
+  popUpPhrase: WAHAHAHAHA

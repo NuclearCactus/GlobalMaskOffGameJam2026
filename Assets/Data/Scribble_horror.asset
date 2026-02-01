@@ -15,3 +15,4 @@ MonoBehaviour:
   texture: {fileID: 2800000, guid: c8208d65a4ef4a141b4674c6b5472ada, type: 3}
   maskName: Horror
   maskType: scribble
+  popUpPhrase: Flavour

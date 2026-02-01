@@ -15,3 +15,4 @@ MonoBehaviour:
   texture: {fileID: 2800000, guid: 6768c248583ec0f4badf6ca67bf89192, type: 3}
   maskName: Cat
   maskType: real
+  popUpPhrase: I ain\t
