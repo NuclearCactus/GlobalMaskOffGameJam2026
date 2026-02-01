@@ -13,11 +13,14 @@ public class PlayerCharacter : Character
     {
         public string name;
         public List<AttackType> inputChain;
-        public CinemachineCamera cam;
+        [Tooltip("Assign the specific CinemachineCamera from your scene here")]
+        public CinemachineCamera cam; 
     }
 
-    [Header("Camera Setup (IMPORTANT)")]
+    [Header("Camera Setup")]
+    [Tooltip("Assign your main 3rd person gameplay camera here")]
     [SerializeField] private CinemachineCamera defaultCamera; 
+    
     [Header("Combo Settings")]
     [SerializeField] private List<Combo> combos; 
     [SerializeField] private float resetTime = 1.0f; 
@@ -37,8 +40,7 @@ public class PlayerCharacter : Character
         if (rb == null) rb = GetComponent<Rigidbody>();
         if (rb != null) rb.freezeRotation = true;
 
-        // FORCE SETUP ON START
-        // Ensure Default is High (10) and all Combos are Low (0)
+        // SETUP: Ensure Default is active (10) and all Combo cameras are inactive (0)
         if (defaultCamera != null) defaultCamera.Priority = 10;
         
         foreach(var c in combos)
@@ -85,6 +87,7 @@ public class PlayerCharacter : Character
             pressed = true;
         }
 
+        // If an attack happened, record it and check for combos
         if (pressed)
         {
             lastInputTime = Time.time;
@@ -97,6 +100,7 @@ public class PlayerCharacter : Character
     {
         foreach (var combo in combos)
         {
+            // Optimization: Don't check combos that are a different length than our current input
             if (currentInputs.Count != combo.inputChain.Count) continue;
 
             bool match = true;
@@ -111,34 +115,37 @@ public class PlayerCharacter : Character
 
             if (match)
             {
-                StartCoroutine(PlayEffect(combo.cam));
-                currentInputs.Clear();
+                Debug.Log($"Combo {combo.name} Executed!");
+                StartCoroutine(PlayCinematicEffect(combo.cam));
+                currentInputs.Clear(); // Reset inputs after a successful combo
                 return;
             }
         }
     }
 
-    private IEnumerator PlayEffect(CinemachineCamera targetCam)
+    private IEnumerator PlayCinematicEffect(CinemachineCamera targetCam)
     {
         if (targetCam == null) yield break;
 
-        // 1. Switch TO Finisher
-        // We make it higher than the default (which is 10)
+        // 1. Switch TO Finisher Camera
+        // We set Priority to 20 to override the Default Camera (which is 10)
         targetCam.Priority = 20; 
 
-        // Slow Motion
+        // 2. Apply Slow Motion
         Time.timeScale = sloMoSpeed;
-        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        Time.fixedDeltaTime = 0.02f * Time.timeScale; // Keep physics consistent
 
+        // 3. Wait for the duration (in Realtime, so we aren't affected by our own SlowMo)
         yield return new WaitForSecondsRealtime(effectDuration);
 
-        // 2. Switch BACK to Default
-        targetCam.Priority = 0; // Drop Finisher
-        if (defaultCamera != null) defaultCamera.Priority = 10; // Ensure Default is dominant
+        // 4. Switch BACK to Default
+        targetCam.Priority = 0; 
 
+        // 5. Reset Time
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f;
     }
+
 
     private void HandleMovement()
     {
