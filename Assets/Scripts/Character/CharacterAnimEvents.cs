@@ -23,4 +23,9 @@ public class CharacterAnimEvents : MonoBehaviour
     {
         character.EndHurt();
     }
+
+    public void EndDash()
+    {
+        character.EndDash();
+    }
 }

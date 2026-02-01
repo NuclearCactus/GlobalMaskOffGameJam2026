@@ -8,10 +8,14 @@ public abstract class Character : MonoBehaviour
     [SerializeField] protected Rigidbody rb;
     [SerializeField] private GameObject AttackHitBox;
     [SerializeField] private string enemyTag;
-    protected const float attackCd = 2f;
+    [SerializeField] protected float attackCd = 1f;
+    [SerializeField] protected float upperCutCd = 3f; 
+    [SerializeField] protected float dashCd = 1.5f;
+
     protected float rightTimer = 0f;
     protected float leftTimer = 0f;
     protected float uppercutTimer = 0f;
+    protected float dashTimer = 1.5f;
     private string attackType = "";
 
     public bool isHurt = false;
@@ -151,6 +155,7 @@ public abstract class Character : MonoBehaviour
         rightTimer += Time.fixedDeltaTime;
         leftTimer += Time.fixedDeltaTime;
         uppercutTimer += Time.fixedDeltaTime;
+        dashTimer += Time.fixedDeltaTime;
         LookAtOpponent();
 
         if (rb.linearVelocity.magnitude > 0f)
@@ -165,10 +170,11 @@ public abstract class Character : MonoBehaviour
 
     public void Move(Vector3 dir)
     {
-        if (isAttacking || isHurt) return;
+        if (isAttacking || isHurt || isDashing) return;
         rb.linearVelocity = Vector3.zero;
 
-        Vector3 deltaPos = transform.position + (speed * Time.fixedDeltaTime * dir.normalized);
+        Vector3 movement = (speed * Time.fixedDeltaTime * dir.normalized);
+        Vector3 deltaPos = transform.position + movement;
 
         deltaPos = GameManager.Instance.ClampCharacterPosInBounds(deltaPos);
 
@@ -200,7 +206,7 @@ public abstract class Character : MonoBehaviour
 
     public bool LeftAttack()
     {
-        if (leftTimer <= attackCd || isAttacking || isHurt) return false;
+        if (leftTimer <= attackCd || isAttacking || isHurt || isDashing) return false;
         leftTimer = 0f;
         guyAnim.SetTrigger("PunchL");
         attackType = "left";
@@ -210,7 +216,7 @@ public abstract class Character : MonoBehaviour
 
     public bool RightAttack()
     {
-        if (rightTimer <= attackCd || isAttacking || isHurt) return false;
+        if (rightTimer <= attackCd || isAttacking || isHurt || isDashing) return false;
         rightTimer = 0f;
         guyAnim.SetTrigger("PunchR");
         attackType = "right";
@@ -220,7 +226,7 @@ public abstract class Character : MonoBehaviour
 
     public bool UpperCut()
     {
-        if (uppercutTimer <= attackCd || isAttacking || isHurt) return false;
+        if (uppercutTimer <= upperCutCd || isAttacking || isHurt || isDashing) return false;
         uppercutTimer = 0f;
         guyAnim.SetTrigger("Uppercut");
         attackType = "up";
@@ -245,7 +251,7 @@ public abstract class Character : MonoBehaviour
 
     public void Hurt(string attackDirection)
     {
-        if (isHurt) return;
+        if (isHurt || isDashing) return;
         isHurt = true;
 
 
@@ -282,6 +288,22 @@ public abstract class Character : MonoBehaviour
         isHurt = false;
         DisableHitbox();
         isAttacking = false;
+    }
+
+    public void StartDash()
+    {
+        if (isHurt || isAttacking || dashTimer <= dashCd) return;
+
+        isDashing = true;
+        guyAnim.SetTrigger("Dash");
+        rb.linearVelocity = Vector3.zero;
+        Vector3 dir = new(currentMoveX, 0f, currentMoveY);
+        rb.AddForce(dir * 8f, ForceMode.Impulse);
+    }
+
+    public void EndDash()
+    {
+        isDashing = false;
     }
 
     private void OnTriggerEnter(Collider other)

@@ -105,7 +105,7 @@ public class AiCharacter : Character
 
         if (Opponent.isHurt) return;
 
-        if (uppercutTimer > attackCd)
+        if (uppercutTimer > uppercutTimer)
         {
             UpperCut();
             return;
