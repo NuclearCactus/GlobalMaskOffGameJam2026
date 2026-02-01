@@ -9,12 +9,18 @@ public abstract class Character : MonoBehaviour
     [SerializeField] private GameObject AttackHitBox;
     [SerializeField] private string enemyTag;
     protected const float attackCd = 2f;
-    [SerializeField] protected float rightTimer = 0f;
-    [SerializeField] protected float leftTimer = 0f;
+    protected float rightTimer = 0f;
+    protected float leftTimer = 0f;
     protected float uppercutTimer = 0f;
-    public bool isAttacking = false;
     private string attackType = "";
+
     public bool isHurt = false;
+    public bool isAttacking = false;
+    public bool isDashing = false;
+
+    private float walkAnimSpeed = 10f;
+    private float currentMoveX;
+    private float currentMoveY;
 
     // === MASK SYSTEM ===
     [Header("Mask Settings")]
@@ -25,7 +31,7 @@ public abstract class Character : MonoBehaviour
     private List<MaskObject> masks = new List<MaskObject>();
     private Transform topMask;
     private Vector3 topMaskScale = new(0.01f, 0.01f, 0.01f);
-    private Vector3 maskScale = new(0.005f, 0.005f, 0.005f);
+    private Vector3 maskScale = new(0.008f, 0.008f, 0.008f);
 
     // Public accessors
     public MaskObject TopMask => masks.Count > 0 ? masks[masks.Count - 1] : null;
@@ -35,7 +41,6 @@ public abstract class Character : MonoBehaviour
     public bool IsAtEnemyArea;
     public Character Opponent { get; private set; }
     public Transform MaskAnchor { get { return maskAnchor; } }
-
 
     private void Start()
     {
@@ -170,8 +175,11 @@ public abstract class Character : MonoBehaviour
         if (deltaPos != transform.position)
             rb.MovePosition(deltaPos);
 
-        guyAnim.SetFloat("MoveX", dir.x);
-        guyAnim.SetFloat("MoveY", dir.z);
+        currentMoveX = Mathf.Lerp(currentMoveX, dir.x, walkAnimSpeed * Time.fixedDeltaTime);
+        currentMoveY = Mathf.Lerp(currentMoveY, dir.z, walkAnimSpeed * Time.fixedDeltaTime);
+
+        guyAnim.SetFloat("MoveX", currentMoveX);
+        guyAnim.SetFloat("MoveY", currentMoveY);
     }
 
     public void LookAtOpponent()

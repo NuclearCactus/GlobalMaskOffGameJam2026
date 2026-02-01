@@ -13,8 +13,10 @@ public class AiCharacter : Character
         Defensive
     }
 
+    [SerializeField] private float attackRangeDetection = 1f;
+
     private AiState currentState = AiState.Idle;
-    private readonly float idleTime = 0.5f;
+    private readonly float idleTime = 2.5f;
     private float idleTimer = 0f;
     private readonly float moveTime = 0.25f;
     private float moveTimer = 1f;
@@ -41,9 +43,9 @@ public class AiCharacter : Character
             default:
                 break;
         }
-        if (isHurt)
+        if (isHurt && currentState == AiState.Offensive)
         {
-            currentState = Random.Range(0, 2) == 0 ? AiState.Offensive : AiState.Defensive;
+            currentState = AiState.Defensive;
         }
     }
 
@@ -62,6 +64,12 @@ public class AiCharacter : Character
         {
             currentState = AiState.Offensive;
             idleTimer = 0f;
+            moveTimer = moveTime;
+        }
+
+        if (IsInAttackRange())
+        {
+            Attack();
         }
     }
 
@@ -87,15 +95,21 @@ public class AiCharacter : Character
 
     private bool IsInAttackRange()
     {
-        return Vector2.Distance(transform.position, Opponent.transform.position) < 1f;
+        return Vector3.Distance(transform.position, Opponent.transform.position) < attackRangeDetection;
     }
 
     private void Attack()
     {
-        currentState = AiState.Idle;
+        currentState = AiState.Defensive;
         defensiveTimer = 0f;
 
         if (Opponent.isHurt) return;
+
+        if (uppercutTimer > attackCd)
+        {
+            UpperCut();
+            return;
+        }
 
         if (leftTimer > attackCd)
         {
@@ -106,12 +120,6 @@ public class AiCharacter : Character
         if (rightTimer > attackCd)
         {
             RightAttack();
-            return;
-        }
-
-        if (uppercutTimer > attackCd)
-        {
-            UpperCut();
             return;
         }
     }

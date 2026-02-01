@@ -6,6 +6,7 @@ public class MaskObject : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private BoxCollider boxCollider;
+    [SerializeField] private MeshRenderer maskRenderer;
 
     private MaskData data;
     private MeshRenderer meshRenderer;
@@ -16,7 +17,7 @@ public class MaskObject : MonoBehaviour
 
     private void Awake()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer = maskRenderer;
         propertyBlock = new MaterialPropertyBlock();
         rb.isKinematic = true;
         boxCollider.enabled = false;
