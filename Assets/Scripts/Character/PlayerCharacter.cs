@@ -4,10 +4,11 @@ using Unity.Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerCharacter : Character
 {
-    public enum AttackType { Left, Right, Uppercut }
+    public enum AttackType { Left, Right, Uppercut, Dash }
 
     [System.Serializable]
     public class Combo
@@ -15,18 +16,18 @@ public class PlayerCharacter : Character
         public string name;
         public List<AttackType> inputChain;
         [Tooltip("Assign the specific CinemachineCamera from your scene here")]
-        public CinemachineCamera cam; 
+        public CinemachineCamera cam;
     }
 
-    public Image CooldownBar;
+    [SerializeField] private Image CooldownBar;
 
     [Header("Camera Setup")]
     [Tooltip("Assign your main 3rd person gameplay camera here")]
-    [SerializeField] private CinemachineCamera defaultCamera; 
-    
+    [SerializeField] private CinemachineCamera defaultCamera;
+
     [Header("Combo Settings")]
-    [SerializeField] private List<Combo> combos; 
-    [SerializeField] private float resetTime = 1.0f; 
+    [SerializeField] private List<Combo> combos;
+    [SerializeField] private float resetTime = 1.0f;
 
     [Header("Cinematic Settings")]
     [SerializeField] private float sloMoSpeed = 0.2f;
@@ -38,25 +39,66 @@ public class PlayerCharacter : Character
     private List<AttackType> currentInputs = new List<AttackType>();
     private float lastInputTime;
 
-    // Tracks which attack's cooldown is currently being displayed
     private AttackType? activeBarType = null;
+
+    // ─── COMBO COUNTER UI ────────────────────────────────────────────────────
+    [Header("Combo UI")]
+    [Tooltip("The TMP text that displays the combo count (e.g. 'x3')")]
+    [SerializeField] private TextMeshProUGUI comboText;
+    [Tooltip("How long after the last hit before the combo resets")]
+    [SerializeField] private float comboTimeout = 1.5f;
+    [Tooltip("How large the text scales up to at the peak of the bounce")]
+    [SerializeField] private float bouncePeakScale = 1.6f;
+    [Tooltip("Duration of the scale-up phase of the bounce")]
+    [SerializeField] private float bounceUpDuration = 0.12f;
+    [Tooltip("Duration of the scale-back-down phase of the bounce")]
+    [SerializeField] private float bounceDownDuration = 0.25f;
+
+    private int comboCount = 0;
+    private Vector3 comboBaseScale;
+    private Coroutine comboBounceCoroutine;
+    private Coroutine comboTimeoutCoroutine;
+
+    // ─── MASK POP-UP UI ──────────────────────────────────────────────────────
+    [Header("Mask Pop-Up UI")]
+    [Tooltip("The TMP text that displays the phrase from the knocked-off or stolen mask")]
+    [SerializeField] private TextMeshProUGUI maskPopUpText;
+    [Tooltip("How long the mask phrase stays visible before disappearing")]
+    [SerializeField] private float maskPopUpDuration = 2.0f;
+
+    private Vector3 maskPopUpBaseScale;
+    private Coroutine maskPopUpBounceCoroutine;
+    private Coroutine maskPopUpHideCoroutine;
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
     {
         if (rb == null) rb = GetComponent<Rigidbody>();
         if (rb != null) rb.freezeRotation = true;
 
-        // SETUP: Ensure Default is active (10) and all Combo cameras are inactive (0)
         if (defaultCamera != null) defaultCamera.Priority = 10;
-        
-        foreach(var c in combos)
+
+        foreach (var c in combos)
         {
-            if(c.cam != null) c.cam.Priority = 0;
+            if (c.cam != null) c.cam.Priority = 0;
         }
 
-        // Hide the cooldown bar at start
         if (CooldownBar != null)
-            CooldownBar.gameObject.SetActive(false);
+            CooldownBar.fillAmount = 1f;
+
+        // Combo text: cache base scale, start hidden
+        if (comboText != null)
+        {
+            comboBaseScale = comboText.transform.localScale;
+            comboText.gameObject.SetActive(false);
+        }
+
+        // Mask pop-up text: cache base scale, start hidden
+        if (maskPopUpText != null)
+        {
+            maskPopUpBaseScale = maskPopUpText.transform.localScale;
+            maskPopUpText.gameObject.SetActive(false);
+        }
     }
 
     protected override void FixedUpdate()
@@ -69,70 +111,146 @@ public class PlayerCharacter : Character
     {
         HandleMovement();
         HandleAttacks();
-        UpdateCooldownBar();
+        UpdateAttackCooldownBar();
     }
 
-    /// <summary>
-    /// Called immediately when an attack is performed to activate the bar at full width.
-    /// </summary>
+    // ─── HIT CALLBACK ────────────────────────────────────────────────────────
+
+    protected override void OnHitLanded(string phrase)
+    {
+        // ── Combo counter ──
+        comboCount++;
+
+        if (comboText != null)
+        {
+            comboText.gameObject.SetActive(true);
+            comboText.text = $"x{comboCount}";
+
+            if (comboBounceCoroutine != null)
+                StopCoroutine(comboBounceCoroutine);
+            comboBounceCoroutine = StartCoroutine(BounceAnimation(comboText.transform, comboBaseScale));
+
+            if (comboTimeoutCoroutine != null)
+                StopCoroutine(comboTimeoutCoroutine);
+            comboTimeoutCoroutine = StartCoroutine(ComboTimeout());
+        }
+
+        // ── Mask phrase pop-up ──
+        // Only show if the mask actually had a phrase defined
+        if (maskPopUpText != null && !string.IsNullOrEmpty(phrase))
+        {
+            maskPopUpText.text = phrase;
+            maskPopUpText.gameObject.SetActive(true);
+
+            if (maskPopUpBounceCoroutine != null)
+                StopCoroutine(maskPopUpBounceCoroutine);
+            maskPopUpBounceCoroutine = StartCoroutine(BounceAnimation(maskPopUpText.transform, maskPopUpBaseScale));
+
+            if (maskPopUpHideCoroutine != null)
+                StopCoroutine(maskPopUpHideCoroutine);
+            maskPopUpHideCoroutine = StartCoroutine(MaskPopUpHide());
+        }
+    }
+
+    // ─── SHARED BOUNCE ANIMATION ─────────────────────────────────────────────
+    // Reusable by both the combo text and the mask pop-up text.
+
+    private IEnumerator BounceAnimation(Transform target, Vector3 baseScale)
+    {
+        // --- Scale UP (snappy pop) ---
+        float elapsed = 0f;
+        while (elapsed < bounceUpDuration)
+        {
+            float t = elapsed / bounceUpDuration;
+            float ease = 1f - (1f - t) * (1f - t); // Ease-out quad
+            target.localScale = baseScale * Mathf.Lerp(1f, bouncePeakScale, ease);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        target.localScale = baseScale * bouncePeakScale;
+
+        // --- Scale DOWN (soft settle) ---
+        elapsed = 0f;
+        while (elapsed < bounceDownDuration)
+        {
+            float t = elapsed / bounceDownDuration;
+            float ease = 1f - Mathf.Pow(1f - t, 3f); // Ease-out cubic
+            target.localScale = baseScale * Mathf.Lerp(bouncePeakScale, 1f, ease);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        target.localScale = baseScale;
+    }
+
+    // ─── COMBO TIMEOUT ───────────────────────────────────────────────────────
+
+    private IEnumerator ComboTimeout()
+    {
+        yield return new WaitForSeconds(comboTimeout);
+
+        comboCount = 0;
+        if (comboText != null)
+        {
+            comboText.gameObject.SetActive(false);
+            comboText.transform.localScale = comboBaseScale;
+        }
+    }
+
+    // ─── MASK POP-UP HIDE ────────────────────────────────────────────────────
+
+    private IEnumerator MaskPopUpHide()
+    {
+        yield return new WaitForSeconds(maskPopUpDuration);
+
+        if (maskPopUpText != null)
+        {
+            maskPopUpText.gameObject.SetActive(false);
+            maskPopUpText.transform.localScale = maskPopUpBaseScale;
+        }
+    }
+
+    // ─── COOLDOWN BAR ────────────────────────────────────────────────────────
+
     private void ActivateCooldownBar(AttackType type)
     {
         activeBarType = type;
         if (CooldownBar != null)
-        {
-            CooldownBar.gameObject.SetActive(true);
-            // Reset X scale to 1 (full bar)
-            Vector3 s = CooldownBar.transform.localScale;
-            s.x = 1f;
-            CooldownBar.transform.localScale = s;
-        }
+            CooldownBar.fillAmount = 0f;
     }
 
     /// <summary>
-    /// Every frame: reads the current timer for the active attack and shrinks the bar proportionally.
-    /// Hides the bar once the cooldown is complete.
+    /// Every frame: fills the bar back up based on how far along the cooldown timer is.
+    /// Once full, clears the active type so it stops updating.
     /// </summary>
-    private void UpdateCooldownBar()
+    private void UpdateAttackCooldownBar()
     {
-        if (CooldownBar == null || activeBarType == null) return;
+        if (CooldownBar == null ||activeBarType == null) return;
 
         float timer, cooldown;
 
-        // Pull the matching timer and cooldown duration from the base class
         switch (activeBarType.Value)
         {
             case AttackType.Left:
-                timer    = leftTimer;
-                cooldown = attackCd;
-                break;
-            case AttackType.Right:
-                timer    = rightTimer;
-                cooldown = attackCd;
-                break;
             case AttackType.Uppercut:
-                timer    = uppercutTimer;
-                cooldown = upperCutCd;
+            case AttackType.Right:
+                timer = stamina;
+                cooldown = maxStamina;
+                break;
+            case AttackType.Dash:
+                timer = stamina;
+                cooldown = maxStamina;
                 break;
             default:
                 return;
         }
 
-        // ratio goes from 0 (just attacked) → 1 (cooldown finished)
-        // We want the bar to shrink, so we invert it: 1 - ratio
-        float ratio = Mathf.Clamp01(timer / cooldown);
-        float barScale = 1f - ratio;
+        CooldownBar.fillAmount = Mathf.Clamp01(timer / cooldown);
 
-        Vector3 s = CooldownBar.transform.localScale;
-        s.x = barScale;
-        CooldownBar.transform.localScale = s;
-
-        // Once fully depleted, hide the bar and clear the active type
-        if (barScale <= 0f)
-        {
-            CooldownBar.gameObject.SetActive(false);
+        if (CooldownBar.fillAmount >= 1f)
             activeBarType = null;
-        }
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     private void HandleAttacks()
     {
@@ -156,19 +274,19 @@ public class PlayerCharacter : Character
             pressed = true;
             ActivateCooldownBar(AttackType.Right);
         }
-        else if(Keyboard.current.spaceKey.wasPressedThisFrame && UpperCut())
+        else if (Keyboard.current.spaceKey.wasPressedThisFrame && UpperCut())
         {
             type = AttackType.Uppercut;
             pressed = true;
             ActivateCooldownBar(AttackType.Uppercut);
         }
-        
-        if(Keyboard.current.eKey.wasPressedThisFrame)
+
+        if (Keyboard.current.eKey.wasPressedThisFrame)
         {
             StartDash();
+            ActivateCooldownBar(AttackType.Dash);
         }
 
-        // If an attack happened, record it and check for combos
         if (pressed)
         {
             lastInputTime = Time.time;
@@ -181,7 +299,6 @@ public class PlayerCharacter : Character
     {
         foreach (var combo in combos)
         {
-            // Optimization: Don't check combos that are a different length than our current input
             if (currentInputs.Count != combo.inputChain.Count) continue;
 
             bool match = true;
@@ -198,7 +315,7 @@ public class PlayerCharacter : Character
             {
                 Debug.Log($"Combo {combo.name} Executed!");
                 StartCoroutine(PlayCinematicEffect(combo.cam));
-                currentInputs.Clear(); // Reset inputs after a successful combo
+                currentInputs.Clear();
                 return;
             }
         }
@@ -208,25 +325,18 @@ public class PlayerCharacter : Character
     {
         if (targetCam == null) yield break;
 
-        // 1. Switch TO Finisher Camera
-        // We set Priority to 20 to override the Default Camera (which is 10)
         targetCam.Priority = 20; 
 
-        // 2. Apply Slow Motion
         Time.timeScale = sloMoSpeed;
-        Time.fixedDeltaTime = 0.02f * Time.timeScale; // Keep physics consistent
+        Time.fixedDeltaTime = 0.02f * Time.timeScale;
 
-        // 3. Wait for the duration (in Realtime, so we aren't affected by our own SlowMo)
         yield return new WaitForSecondsRealtime(effectDuration);
 
-        // 4. Switch BACK to Default
         targetCam.Priority = 0; 
 
-        // 5. Reset Time
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f;
     }
-
 
     private void HandleMovement()
     {

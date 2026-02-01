@@ -84,7 +84,7 @@ public class AiCharacter : Character
 
     private void HandleDefensive()
     {
-        Move(transform.position - Opponent.transform.position);
+        Move(-(transform.position - Opponent.transform.position));
         defensiveTimer += Time.fixedDeltaTime;
         if (defensiveTimer > defensiveTime)
         {
@@ -92,7 +92,7 @@ public class AiCharacter : Character
             currentState = AiState.Idle;
         }
 
-        if (dashTimer > dashCd && IsInAttackRange())
+        if (stamina > dashCd && IsInAttackRange())
         {
             StartDash();
         }
@@ -110,22 +110,15 @@ public class AiCharacter : Character
 
         if (Opponent.isHurt) return;
 
-        if (uppercutTimer > upperCutCd)
+        if (stamina > attackCd)
         {
-            UpperCut();
-            return;
-        }
-
-        if (leftTimer > attackCd)
-        {
-            LeftAttack();
-            return;
-        }
-
-        if (rightTimer > attackCd)
-        {
-            RightAttack();
-            return;
+            int random = Random.Range(0, 3);
+            if (random == 0)
+                UpperCut();
+            else if (random == 1)
+                LeftAttack();
+            else
+                RightAttack();
         }
     }
 

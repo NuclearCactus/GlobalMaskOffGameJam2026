@@ -7,6 +7,8 @@ public class PersistentManager : MonoBehaviour
 {
     public static PersistentManager Instance { get; private set; }
 
+    public bool PlayerWins = false;
+
     private void Awake()
     {
         if (Instance == null)
