@@ -258,6 +258,7 @@ public abstract class Character : MonoBehaviour
     public void Hurt(string attackDirection)
     {
         if (isHurt || isDashing) return;
+        Instantiate(heartParticlePrefab, maskAnchor.position, Quaternion.identity, null);
         isHurt = true;
         soundManager.PlaySound(SoundType.PunchHit);
 

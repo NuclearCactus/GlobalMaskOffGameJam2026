@@ -655,6 +655,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1299439760}
     - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
+      propertyPath: heartParticlePrefab
+      value: 
+      objectReference: {fileID: 2052181278063233572, guid: 29d388be8fdf64503a546cb95e423c78, type: 3}
+    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
       propertyPath: combos.Array.data[0].cam
       value: 
       objectReference: {fileID: 376351480}
@@ -1015,8 +1019,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1313,8 +1317,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2109,6 +2113,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: AiCharacter
       objectReference: {fileID: 0}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: heartParticle
+      value: 
+      objectReference: {fileID: 2052181278063233572, guid: 29d388be8fdf64503a546cb95e423c78, type: 3}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: heartParticlePrefab
+      value: 
+      objectReference: {fileID: 2052181278063233572, guid: 29d388be8fdf64503a546cb95e423c78, type: 3}
     - target: {fileID: 5058976210347502256, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.2707
