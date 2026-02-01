@@ -12,9 +12,11 @@ public abstract class Character : MonoBehaviour
     protected float rightTimer = 0f;
     protected float leftTimer = 0f;
     protected float uppercutTimer = 0f;
-    public bool isAttacking = false;
     private string attackType = "";
+
     public bool isHurt = false;
+    public bool isAttacking = false;
+    public bool isDashing = false;
 
     private float walkAnimSpeed = 10f;
     private float currentMoveX;
