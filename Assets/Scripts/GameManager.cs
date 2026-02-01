@@ -20,8 +20,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject bottomArenaObj;
     [SerializeField] private float changeSideTime = 1f;
     private float changeSideTimer = 0f;
-    private float radius;
-
+    [SerializeField] private float radius;
+     
     private Character topCharacter = null;
     private Character botCharacter = null;
 
@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         Collider ArenaCollider = topArenaObj.GetComponent<Collider>();
-        radius = (ArenaCollider.bounds.max.x - ArenaCollider.bounds.min.x) * 0.5f;
 
         Player.SetOpponent(Ai);
         Ai.SetOpponent(Player);

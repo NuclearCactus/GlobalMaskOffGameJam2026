@@ -67,5 +67,5 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Nimetön.slnx"
+    "dotnet.defaultSolution": "GlobalMaskOffGameJam2026.slnx"
 }

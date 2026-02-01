@@ -107,10 +107,14 @@ MonoBehaviour:
   rb: {fileID: 4000359116605640096}
   AttackHitBox: {fileID: 1338612136609062177}
   enemyTag: Player
-  isAttacking: 0
+  attackCd: 1
+  upperCutCd: 3
+  dashCd: 1.5
   isHurt: 0
+  isAttacking: 0
+  isDashing: 0
   maskAnchor: {fileID: 1016265432435121845}
-  initialMaskCount: 15
+  initialMaskCount: 20
   maskSpacing: 0.0015
   IsAtEnemyArea: 0
   attackRangeDetection: 3

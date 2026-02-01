@@ -86,7 +86,12 @@ public class PlayerCharacter : Character
             type = AttackType.Uppercut;
             pressed = true;
         }
-
+        
+        if(Keyboard.current.eKey.wasPressedThisFrame)
+        {
+            StartDash();
+        }
+        
         // If an attack happened, record it and check for combos
         if (pressed)
         {

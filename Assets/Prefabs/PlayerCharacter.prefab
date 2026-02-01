@@ -228,10 +228,14 @@ MonoBehaviour:
   rb: {fileID: 6256395724797169519}
   AttackHitBox: {fileID: 2811001347415727123}
   enemyTag: Enemy
-  isAttacking: 0
+  attackCd: 1
+  upperCutCd: 3
+  dashCd: 1.5
   isHurt: 0
+  isAttacking: 0
+  isDashing: 0
   maskAnchor: {fileID: 551325750526912293}
-  initialMaskCount: 15
+  initialMaskCount: 20
   maskSpacing: 0.0015
   IsAtEnemyArea: 0
   defaultCamera: {fileID: 0}
