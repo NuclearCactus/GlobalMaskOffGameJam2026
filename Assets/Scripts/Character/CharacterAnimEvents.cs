@@ -3,6 +3,7 @@ using UnityEngine;
 public class CharacterAnimEvents : MonoBehaviour
 {
     [SerializeField] private Character character;
+    [SerializeField] private SoundManager sound;
 
     public void EnableHitbox()
     {
@@ -27,5 +28,10 @@ public class CharacterAnimEvents : MonoBehaviour
     public void EndDash()
     {
         character.EndDash();
+    }
+
+    public void Step()
+    {
+        sound.PlaySound(SoundType.FootStep);
     }
 }

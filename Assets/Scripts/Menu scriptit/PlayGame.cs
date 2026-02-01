@@ -5,6 +5,6 @@ public class PlayGame : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 public void GoGame()
     {
-        SceneManager.LoadSceneAsync("DifficultyScene");
+        SceneManager.LoadSceneAsync("TheRealScene");
     }
 }

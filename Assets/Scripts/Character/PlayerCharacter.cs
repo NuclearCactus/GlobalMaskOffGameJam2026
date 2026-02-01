@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using Unity.Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class PlayerCharacter : Character
 {
@@ -16,6 +17,8 @@ public class PlayerCharacter : Character
         [Tooltip("Assign the specific CinemachineCamera from your scene here")]
         public CinemachineCamera cam; 
     }
+
+    public Image CooldownBar;
 
     [Header("Camera Setup")]
     [Tooltip("Assign your main 3rd person gameplay camera here")]
@@ -35,6 +38,9 @@ public class PlayerCharacter : Character
     private List<AttackType> currentInputs = new List<AttackType>();
     private float lastInputTime;
 
+    // Tracks which attack's cooldown is currently being displayed
+    private AttackType? activeBarType = null;
+
     private void Awake()
     {
         if (rb == null) rb = GetComponent<Rigidbody>();
@@ -47,6 +53,10 @@ public class PlayerCharacter : Character
         {
             if(c.cam != null) c.cam.Priority = 0;
         }
+
+        // Hide the cooldown bar at start
+        if (CooldownBar != null)
+            CooldownBar.gameObject.SetActive(false);
     }
 
     protected override void FixedUpdate()
@@ -59,6 +69,69 @@ public class PlayerCharacter : Character
     {
         HandleMovement();
         HandleAttacks();
+        UpdateCooldownBar();
+    }
+
+    /// <summary>
+    /// Called immediately when an attack is performed to activate the bar at full width.
+    /// </summary>
+    private void ActivateCooldownBar(AttackType type)
+    {
+        activeBarType = type;
+        if (CooldownBar != null)
+        {
+            CooldownBar.gameObject.SetActive(true);
+            // Reset X scale to 1 (full bar)
+            Vector3 s = CooldownBar.transform.localScale;
+            s.x = 1f;
+            CooldownBar.transform.localScale = s;
+        }
+    }
+
+    /// <summary>
+    /// Every frame: reads the current timer for the active attack and shrinks the bar proportionally.
+    /// Hides the bar once the cooldown is complete.
+    /// </summary>
+    private void UpdateCooldownBar()
+    {
+        if (CooldownBar == null || activeBarType == null) return;
+
+        float timer, cooldown;
+
+        // Pull the matching timer and cooldown duration from the base class
+        switch (activeBarType.Value)
+        {
+            case AttackType.Left:
+                timer    = leftTimer;
+                cooldown = attackCd;
+                break;
+            case AttackType.Right:
+                timer    = rightTimer;
+                cooldown = attackCd;
+                break;
+            case AttackType.Uppercut:
+                timer    = uppercutTimer;
+                cooldown = upperCutCd;
+                break;
+            default:
+                return;
+        }
+
+        // ratio goes from 0 (just attacked) → 1 (cooldown finished)
+        // We want the bar to shrink, so we invert it: 1 - ratio
+        float ratio = Mathf.Clamp01(timer / cooldown);
+        float barScale = 1f - ratio;
+
+        Vector3 s = CooldownBar.transform.localScale;
+        s.x = barScale;
+        CooldownBar.transform.localScale = s;
+
+        // Once fully depleted, hide the bar and clear the active type
+        if (barScale <= 0f)
+        {
+            CooldownBar.gameObject.SetActive(false);
+            activeBarType = null;
+        }
     }
 
     private void HandleAttacks()
@@ -75,23 +148,26 @@ public class PlayerCharacter : Character
         {
             type = AttackType.Left;
             pressed = true;
+            ActivateCooldownBar(AttackType.Left);
         }
         else if (Mouse.current.rightButton.wasPressedThisFrame && RightAttack())
         {
             type = AttackType.Right;
             pressed = true;
+            ActivateCooldownBar(AttackType.Right);
         }
         else if(Keyboard.current.spaceKey.wasPressedThisFrame && UpperCut())
         {
             type = AttackType.Uppercut;
             pressed = true;
+            ActivateCooldownBar(AttackType.Uppercut);
         }
         
         if(Keyboard.current.eKey.wasPressedThisFrame)
         {
             StartDash();
         }
-        
+
         // If an attack happened, record it and check for combos
         if (pressed)
         {
