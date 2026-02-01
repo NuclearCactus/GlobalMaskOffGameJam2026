@@ -11,10 +11,10 @@ public abstract class Character : MonoBehaviour
     [SerializeField] protected Rigidbody rb;
     [SerializeField] private GameObject AttackHitBox;
     [SerializeField] private string enemyTag;
-    [SerializeField] protected float attackCd = 2f;
+    [SerializeField] protected float attackCd = 1f;
     [SerializeField] protected float dashCd = 1.5f;
 
-    protected float maxStamina = 3f;
+    protected float maxStamina = 4f;
     protected float stamina = 2f;
     private string attackType = "";
 
