@@ -15,4 +15,4 @@ MonoBehaviour:
   texture: {fileID: 2800000, guid: 217c786c68063984a838a810c669ac12, type: 3}
   maskName: Sack
   maskType: pixel
-  popUpPhrase: is Gonna
+  popUpPhrase: Have you played Hollow Knight?
