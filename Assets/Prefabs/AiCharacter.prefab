@@ -102,16 +102,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22809dc60b589324197e0db1d471c7fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AiCharacter
-  IsAtEnemyArea: 0
   guyAnim: {fileID: 3431144947365820451}
-  speed: 4
-  attackCd: 1.5
+  speed: 3
   rb: {fileID: 4000359116605640096}
   AttackHitBox: {fileID: 1338612136609062177}
   enemyTag: Player
+  isAttacking: 0
+  isHurt: 0
   maskAnchor: {fileID: 1016265432435121845}
-  initialMaskCount: 5
-  maskSpacing: 0.01
+  initialMaskCount: 15
+  maskSpacing: 0.0015
+  IsAtEnemyArea: 0
+  attackRangeDetection: 3
 --- !u!54 &4000359116605640096
 Rigidbody:
   m_ObjectHideFlags: 0

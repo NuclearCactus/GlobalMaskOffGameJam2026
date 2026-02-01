@@ -359,22 +359,6 @@ PrefabInstance:
       propertyPath: m_Interpolate
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
-      propertyPath: speed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
-      propertyPath: isAttacking
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
-      propertyPath: maskSpacing
-      value: 0.0015
-      objectReference: {fileID: 0}
-    - target: {fileID: 6459688280735501593, guid: 75753ed0840c74a49a4e641537385595, type: 3}
-      propertyPath: initialMaskCount
-      value: 15
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 1092193231205641213, guid: 75753ed0840c74a49a4e641537385595, type: 3}
@@ -1085,22 +1069,6 @@ PrefabInstance:
     - target: {fileID: 2908112832305347870, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_Name
       value: AiCharacter
-      objectReference: {fileID: 0}
-    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
-      propertyPath: speed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
-      propertyPath: maskSpacing
-      value: 0.0015
-      objectReference: {fileID: 0}
-    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
-      propertyPath: initialMaskCount
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
-      propertyPath: attackRangeDetection
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5058976210347502256, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_LocalPosition.x

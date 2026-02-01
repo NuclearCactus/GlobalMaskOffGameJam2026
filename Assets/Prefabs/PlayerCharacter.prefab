@@ -223,16 +223,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69877d817060d1f429fe78cbc2e32fef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
-  IsAtEnemyArea: 0
   guyAnim: {fileID: 8062258562703126997}
-  speed: 4
-  attackCd: 1
+  speed: 3
   rb: {fileID: 6256395724797169519}
   AttackHitBox: {fileID: 2811001347415727123}
   enemyTag: Enemy
+  isAttacking: 0
+  isHurt: 0
   maskAnchor: {fileID: 551325750526912293}
-  initialMaskCount: 10
-  maskSpacing: 0.01
+  initialMaskCount: 15
+  maskSpacing: 0.0015
+  IsAtEnemyArea: 0
+  defaultCamera: {fileID: 0}
+  combos: []
+  resetTime: 1
+  sloMoSpeed: 0.2
+  effectDuration: 1.5
 --- !u!54 &6256395724797169519
 Rigidbody:
   m_ObjectHideFlags: 0
