@@ -15,11 +15,14 @@ EditorBuildSettings:
     path: Assets/Scenes/menu/MainMenu.unity
     guid: 1d0cea501908c4c5386c27143749f65f
   - enabled: 1
-    path: Assets/Scenes/menu/GameScene.unity
+    path: Assets/Scenes/menu/Pause menu test.unity
     guid: c7c2c3e5e370c48cdb3992b7f81bb2dd
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/menu/DifficultyScene.unity
     guid: bf4b77ed9077c4ee2a8d8c4fe4e5ef65
+  - enabled: 1
+    path: Assets/Scenes/TheRealScene.unity
+    guid: e8e250f10e3debe4497b155935ef851d
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
