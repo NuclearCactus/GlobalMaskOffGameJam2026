@@ -382,7 +382,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -363, y: 254}
+  m_AnchoredPosition: {x: -606, y: 254}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &613195651
@@ -405,9 +405,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Attack : Right mouse button
+  m_text: 'Attack : Right and left mouse button
 
-    Movement : WASD'
+    Movement : WASD
+
+    Uppercut
+    : Space
+
+    Dash : E'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 67a8b2cdb85da417ba3309ddf62653b9, type: 2}
   m_sharedMaterial: {fileID: -6983888392411477324, guid: 67a8b2cdb85da417ba3309ddf62653b9, type: 2}
@@ -473,7 +478,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -1184.7869, w: 0}
+  m_margin: {x: 0, y: 0, z: -1556.75, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
