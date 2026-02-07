@@ -15,4 +15,4 @@ MonoBehaviour:
   texture: {fileID: 2800000, guid: 3eb35db81e0506648bce5f7c7744ada7, type: 3}
   maskName: Sword
   maskType: stylized
-  popUpPhrase: What is the best Zelda game?
+  popUpPhrase: Ocarina of Time beats Breath of the Wild

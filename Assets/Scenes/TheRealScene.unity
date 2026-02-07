@@ -964,6 +964,7 @@ GameObject:
   - component: {fileID: 1299439759}
   - component: {fileID: 1299439761}
   - component: {fileID: 1299439760}
+  - component: {fileID: 1299439762}
   m_Layer: 5
   m_Name: Flavour
   m_TagString: Untagged
@@ -1090,6 +1091,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1299439758}
   m_CullTransparentMesh: 1
+--- !u!114 &1299439762
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1299439758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Shadow
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 5, y: -5}
+  m_UseGraphicAlpha: 1
 --- !u!4 &1326251993 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5006788735347837852, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
@@ -1487,7 +1503,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1883800942}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14370315, y: -0.1492473, z: 0.021928502, w: 0.97805613}
+  m_LocalRotation: {x: 0.14376888, y: -0.1462855, z: 0.021493334, w: 0.9785035}
   m_LocalPosition: {x: 2.38, y: 2.93, z: -7.5499997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1903,7 +1919,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1974034957}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.14370315, y: -0.1492473, z: 0.021928502, w: 0.97805613}
+  m_LocalRotation: {x: 0.14376888, y: -0.1462855, z: 0.021493334, w: 0.9785035}
   m_LocalPosition: {x: 2.38, y: 2.93, z: -7.5499997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

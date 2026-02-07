@@ -15,4 +15,4 @@ MonoBehaviour:
   texture: {fileID: 2800000, guid: e8482b87820fea74a90d801199c6fc1f, type: 3}
   maskName: Luchadore
   maskType: pixel
-  popUpPhrase: I love superhero comics!
+  popUpPhrase: You haven't seen me and Batman in the same room
