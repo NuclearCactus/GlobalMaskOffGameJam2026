@@ -86,7 +86,11 @@ public abstract class Character : MonoBehaviour
     /// </summary>
     public string RemoveTopMask()
     {
-        if (masks.Count == 0) return "";
+        if (masks.Count == 0)
+        {
+            OnDefeated();
+            return "";
+        }
 
         MaskObject maskToBeRemoved = masks[masks.Count - 1];
 
@@ -97,11 +101,7 @@ public abstract class Character : MonoBehaviour
         masks.RemoveAt(masks.Count - 1);
         maskToBeRemoved.PopMask();
 
-        if (masks.Count == 0)
-        {
-            OnDefeated();
-        }
-        else
+        if (masks.Count > 0)
         {
             topMask = masks[^1].transform;
             topMask.localScale = topMaskScale;
@@ -116,7 +116,11 @@ public abstract class Character : MonoBehaviour
     /// </summary>
     public string StealTopMask()
     {
-        if (masks.Count == 0) return "";
+        if (masks.Count == 0)
+        {
+            OnDefeated();
+            return "";
+        }
 
         MaskObject maskToBeRemoved = masks[masks.Count - 1];
 
@@ -125,11 +129,7 @@ public abstract class Character : MonoBehaviour
         masks.RemoveAt(masks.Count - 1);
         maskToBeRemoved.StealMask(Opponent);
 
-        if (masks.Count == 0)
-        {
-            OnDefeated();
-        }
-        else
+        if (masks.Count > 0)
         {
             topMask = masks[^1].transform;
             topMask.localScale = topMaskScale;
@@ -140,11 +140,11 @@ public abstract class Character : MonoBehaviour
 
     protected virtual void OnDefeated()
     {
-        Debug.Log($"{gameObject.name} has been defeated!");
-        bool didplayerwin = TryGetComponent<PlayerCharacter>(out var _);
+        bool didplayerwin = GetComponent<PlayerCharacter>() == null;
         // Override in PlayerCharacter or AiCharacter for specific behavior
-    
-        if (didplayerwin){
+
+        if (didplayerwin)
+        {
             SceneManager.LoadScene("Winscene");
         }
         else
@@ -325,7 +325,7 @@ public abstract class Character : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(enemyTag) && other.TryGetComponent<Character>(out var character) && character != this)
+        if (other.TryGetComponent<Character>(out var character) && character != this)
         {
             character.Hurt(attackType);
             Debug.Log(other.name + " took damage - Masks remaining: " + character.MaskCount);

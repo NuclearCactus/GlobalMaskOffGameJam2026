@@ -15,14 +15,14 @@ public class AiCharacter : Character
 
     [SerializeField] private float attackRangeDetection = 1f;
 
-    private AiState currentState = AiState.Idle;
+    [SerializeField] private AiState currentState = AiState.Idle;
     private readonly float idleTime = 2.5f;
     private float idleTimer = 0f;
-    private readonly float moveTime = 0.25f;
+    private readonly float moveTime = 0.5f;
     private float moveTimer = 1f;
     private Vector3 currentDir = Vector3.zero;
 
-    private readonly float defensiveTime = 1f;
+    private readonly float defensiveTime = 1.5f;
     private float defensiveTimer = 0f;
 
 
@@ -47,6 +47,7 @@ public class AiCharacter : Character
         {
             currentState = AiState.Defensive;
         }
+        Move(currentDir);
     }
 
     private void HandleIdle()
@@ -57,7 +58,6 @@ public class AiCharacter : Character
             currentDir = GetRandomDir();
             moveTimer = 0f;
         }
-        Move(currentDir);
 
         idleTimer += Time.fixedDeltaTime;
         if (idleTimer > idleTime)
@@ -75,7 +75,7 @@ public class AiCharacter : Character
 
     private void HandleOffensive()
     {
-        Move(Opponent.transform.position - transform.position);
+        currentDir = Opponent.transform.position - transform.position;
         if (IsInAttackRange())
         {
             Attack();
@@ -84,7 +84,7 @@ public class AiCharacter : Character
 
     private void HandleDefensive()
     {
-        Move(-(transform.position - Opponent.transform.position));
+        currentDir = -(Opponent.transform.position - transform.position);
         defensiveTimer += Time.fixedDeltaTime;
         if (defensiveTimer > defensiveTime)
         {
