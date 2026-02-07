@@ -26,8 +26,8 @@ Transform:
   m_GameObject: {fileID: 1338612136609062177}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 1.75}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1.5, z: 1.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5058976210347502256}
@@ -51,7 +51,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.5, y: 1, z: 2}
+  m_Size: {x: 3, y: 1, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1779097694621192528
 GameObject:
@@ -362,7 +362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22809dc60b589324197e0db1d471c7fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AiCharacter
-  heartParticlePrefab: {fileID: 0}
+  heartParticlePrefab: {fileID: 2052181278063233572, guid: 29d388be8fdf64503a546cb95e423c78, type: 3}
   soundManager: {fileID: 8569301105424293341}
   guyAnim: {fileID: 3431144947365820451}
   speed: 3
@@ -376,9 +376,14 @@ MonoBehaviour:
   isDashing: 0
   maskAnchor: {fileID: 1016265432435121845}
   initialMaskCount: 15
-  maskSpacing: 0.001
+  maskSpacing: 0.002
   IsAtEnemyArea: 0
-  attackRangeDetection: 3
+  attackRangeDetection: 2.75
+  dashDistance: 10
+  currentState: 0
+  idleTime: 3
+  moveTime: 0.75
+  defensiveTime: 1
 --- !u!54 &4000359116605640096
 Rigidbody:
   m_ObjectHideFlags: 0

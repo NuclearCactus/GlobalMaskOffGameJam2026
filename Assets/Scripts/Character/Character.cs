@@ -175,7 +175,7 @@ public abstract class Character : MonoBehaviour
             Vector3 deltaPos = transform.position + rb.linearVelocity * Time.deltaTime;
             if (GameManager.Instance.IsOutOfBounds(deltaPos))
             {
-                rb.linearVelocity *= -0.25f;
+                rb.linearVelocity = 0.25f * rb.linearVelocity.magnitude * (GameManager.Instance.transform.position - deltaPos).normalized;
             }
         }
     }
@@ -321,6 +321,7 @@ public abstract class Character : MonoBehaviour
     public void EndDash()
     {
         isDashing = false;
+        rb.linearVelocity = Vector3.zero;
     }
 
     private void OnTriggerEnter(Collider other)

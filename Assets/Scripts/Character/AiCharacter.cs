@@ -84,7 +84,7 @@ public class AiCharacter : Character
         {
             Attack();
         }
-        if (IsFarAway())
+        else if (IsFarAway())
         {
             Move(currentDir);
             StartDash();
@@ -105,6 +105,7 @@ public class AiCharacter : Character
 
         if (IsInAttackRange() || Opponent.isAttacking)
         {
+            Move(currentDir);
             StartDash();
         }
     }

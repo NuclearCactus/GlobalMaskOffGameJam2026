@@ -23,6 +23,18 @@ public class MaskObject : MonoBehaviour
         boxCollider.enabled = false;
     }
 
+    private void FlipMask(float force, float torque)
+    {
+        transform.parent = null;
+        rb.isKinematic = false;
+        boxCollider.enabled = true;
+        Vector3 forceDir = Random.onUnitSphere;
+        if (forceDir.y < 0) forceDir.y *= -1f;
+        Vector3 torqueDir = Random.onUnitSphere;
+        rb.AddForce(forceDir * force, ForceMode.Impulse);
+        rb.AddTorque(torqueDir * torque, ForceMode.Impulse);
+    }
+
     public void Setup(MaskData maskData)
     {
         data = maskData;
@@ -34,25 +46,17 @@ public class MaskObject : MonoBehaviour
 
     public void PopMask()
     {
-        transform.parent = null;
-        rb.isKinematic = false;
         float force = Random.Range(5f, 20f);
-        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
         float torque = Random.Range(5f, 60f);
-        rb.AddTorque(transform.right * torque, ForceMode.Impulse);
-        boxCollider.enabled = true;
+        FlipMask(force, torque);
     }
 
     public void StealMask(Character stealer)
     {
-        transform.parent = null;
-        rb.isKinematic = false;
-        boxCollider.enabled = true;
-
         float force = Random.Range(15f, 20f);
-        rb.AddForce(Vector3.up * force, ForceMode.Impulse);
         float torque = Random.Range(25f, 60f);
-        rb.AddTorque(transform.right * torque, ForceMode.Impulse);
+        FlipMask(force, torque);
+
         StartCoroutine(AttachMaskAfterDelay(stealer));
     }
 
