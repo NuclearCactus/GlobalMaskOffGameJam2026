@@ -2134,6 +2134,22 @@ PrefabInstance:
       value: AiCharacter
       objectReference: {fileID: 0}
     - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: idleTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: moveTime
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: dashDistance
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
+      propertyPath: defensiveTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: heartParticle
       value: 
       objectReference: {fileID: 2052181278063233572, guid: 29d388be8fdf64503a546cb95e423c78, type: 3}
@@ -2147,7 +2163,7 @@ PrefabInstance:
       objectReference: {fileID: 2052181278063233572, guid: 29d388be8fdf64503a546cb95e423c78, type: 3}
     - target: {fileID: 4417451354421723744, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: attackRangeDetection
-      value: 2
+      value: 2.25
       objectReference: {fileID: 0}
     - target: {fileID: 5058976210347502256, guid: cb802f2d5ebf32f43b958875b328d354, type: 3}
       propertyPath: m_LocalPosition.x

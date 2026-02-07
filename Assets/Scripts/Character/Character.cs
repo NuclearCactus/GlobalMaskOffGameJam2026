@@ -307,14 +307,14 @@ public abstract class Character : MonoBehaviour
 
     public void StartDash()
     {
-        if (isHurt || isAttacking || stamina < dashCd) return;
+        if (isHurt || isAttacking || isDashing || stamina < dashCd) return;
 
         isDashing = true;
         stamina -= dashCd;
         guyAnim.SetTrigger("Dash");
         rb.linearVelocity = Vector3.zero;
         Vector3 dir = new(currentMoveX, 0f, currentMoveY);
-        rb.AddForce(dir * 8f, ForceMode.Impulse);
+        rb.AddForce(dir * 6f, ForceMode.Impulse);
         soundManager.PlaySound(SoundType.PunchSwing);
     }
 

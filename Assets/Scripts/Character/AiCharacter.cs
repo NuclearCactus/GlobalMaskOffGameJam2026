@@ -14,21 +14,24 @@ public class AiCharacter : Character
     }
 
     [SerializeField] private float attackRangeDetection = 1f;
+    [SerializeField] private float dashDistance = 3f;
 
     [SerializeField] private AiState currentState = AiState.Idle;
-    private readonly float idleTime = 2.5f;
+    [SerializeField] private float idleTime = 3f;
+    [SerializeField] private float moveTime = 1f;
+    [SerializeField] private float defensiveTime = 1f;
+
     private float idleTimer = 0f;
-    private readonly float moveTime = 0.5f;
     private float moveTimer = 1f;
     private Vector3 currentDir = Vector3.zero;
 
-    private readonly float defensiveTime = 1.5f;
     private float defensiveTimer = 0f;
 
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
+
         switch (currentState)
         {
             case AiState.Idle:
@@ -52,6 +55,7 @@ public class AiCharacter : Character
 
     private void HandleIdle()
     {
+        if (isHurt) return;
         moveTimer += Time.fixedDeltaTime;
         if (moveTimer > moveTime)
         {
@@ -80,11 +84,18 @@ public class AiCharacter : Character
         {
             Attack();
         }
+        if (IsFarAway())
+        {
+            Move(currentDir);
+            StartDash();
+        }
     }
 
     private void HandleDefensive()
     {
         currentDir = -(Opponent.transform.position - transform.position);
+
+        if (isHurt) return;
         defensiveTimer += Time.fixedDeltaTime;
         if (defensiveTimer > defensiveTime)
         {
@@ -92,7 +103,7 @@ public class AiCharacter : Character
             currentState = AiState.Idle;
         }
 
-        if (stamina > dashCd && IsInAttackRange())
+        if (IsInAttackRange() || Opponent.isAttacking)
         {
             StartDash();
         }
@@ -101,6 +112,11 @@ public class AiCharacter : Character
     private bool IsInAttackRange()
     {
         return Vector3.Distance(transform.position, Opponent.transform.position) < attackRangeDetection;
+    }
+
+    private bool IsFarAway()
+    {
+        return Vector3.Distance(transform.position, Opponent.transform.position) > dashDistance && !isDashing;
     }
 
     private void Attack()
